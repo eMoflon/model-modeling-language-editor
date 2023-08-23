@@ -1,0 +1,31 @@
+{
+  "name": "model-modeling-language-browser",
+  "version": "0.0.1",
+  "description": "Frontend part of a Model modeling language fully-in-browser code editor",
+  "main": "out/index.js",
+  "author": "JanikNex",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "prepare": "npm run copy:worker && npm run build && npm run build:ls",
+    "copy:worker": "shx cp -fr ./node_modules/monaco-editor-workers/dist/workers/editorWorker-es.js ./public/",
+    "build": "tsc -p tsconfig.json --noEmit && esbuild ./src/mmlEditor/index.ts --bundle --target=es2020 --format=esm --loader:.ttf=file --external:fs --external:path --sourcemap --outfile=./public/mmlEditor.js",
+    "_build:ls_": "esbuild ./base/main-browser.js --bundle --format=esm --sourcemap --outfile=./public/mmlServerWorker.js",
+    "build:ls": "shx cp ./base/mmlServerWorker.js ./public/ && shx cp ./base/mmlServerWorker.js.map ./public/",
+    "serve": "npx http-server public -p 3000",
+    "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -p tsconfig.json -w\" \"esbuild ./src/mmlEditor/index.ts --bundle --target=es2020 --format=esm --loader:.ttf=file --external:fs --external:path --sourcemap --outfile=./public/mmlEditor.js --watch\""
+  },
+  "devDependencies": {
+    "typescript":"^5.0.0",
+    "esbuild": "^0.15.8",
+    "langium": "^1.0.0",
+    "js-base64": "^3.7.4",
+    "monaco-editor-workers": "^0.34.2",
+    "monaco-editor-wrapper": "^1.6.0",
+    "shx": "^0.3.4",
+    "source-map": "^0.7.4",
+    "vscode-languageserver": "~8.0.0",
+    "concurrently": "^7.6.0",
+    "http-server": "^14.1.1"
+  }
+}

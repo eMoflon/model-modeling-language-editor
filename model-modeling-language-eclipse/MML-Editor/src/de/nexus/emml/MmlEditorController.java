@@ -1,25 +1,24 @@
 package de.nexus.emml;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 
 import com.google.gson.Gson;
 
-import de.nexus.emml.MmlEditorSyncInitializer;
 import de.nexus.emml.generator.DeserializedGenerator;
 import de.nexus.emml.generator.EcoreTypeGraphBuilder;
 import de.nexus.emml.generator.GeneratorDeserializer;
 import de.nexus.emml.generator.GeneratorEntry;
-import de.nexus.emml.generator.MmlEntityTemplates;
 import de.nexus.emml.generator.entities.ModelEntity;
 import de.nexus.emml.generator.entities.PackageEntity;
 import javafx.concurrent.Worker.State;
@@ -31,7 +30,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
 
 public class MmlEditorController implements Initializable {
 
@@ -145,52 +143,6 @@ public class MmlEditorController implements Initializable {
 	@FXML
 	private void exportModel() {
 		Platform.getLog(getClass()).info("Export model");
-		String genResult = (String) webView.getEngine().executeScript("getCombinedGeneratorResult()");
-		Platform.getLog(getClass()).info(genResult.toString());
-		DeserializedGenerator desGen = GeneratorDeserializer.deserialize(genResult);
-		if (desGen.hasErrors()) {
-			Alert alert = new Alert(AlertType.ERROR,
-					"There are " + String.valueOf(desGen.getDiagnosticStorage().stream().map(x -> x.getErrorCount())
-							.mapToInt(Integer::intValue).sum()) + " errors! Cannot export models!",
-					ButtonType.CLOSE);
-			alert.showAndWait();
-		} else {
-			Platform.getLog(getClass())
-					.info("Successfully constructed documents: " + String.valueOf(desGen.getGeneratorStorage().size()));
-			if (desGen.getGeneratorStorage().size() > 0) {
-				Platform.getLog(getClass()).info("Deserialize model");
-				ModelEntity modEntity = desGen.getGeneratorStorage().get(0).getModel();
-				Platform.getLog(getClass()).info("Deserialization completed!");
-				Platform.getLog(getClass()).info(modEntity.toString());
-				Platform.getLog(getClass()).info("==========[Building ecore]==========");
-				for (GeneratorEntry genEntry : desGen.getGeneratorStorage()) {
-					ModelEntity model = genEntry.getModel();
-					for (PackageEntity pckgEntity : model.getPackages()) {
-						new EcoreTypeGraphBuilder(pckgEntity, genEntry.getUri().toString() + "/" + pckgEntity.getName())
-								.toEcoreFile(basePath.toPath().toString() + "\\"
-										+ genEntry.getUri().getPath().replace(".mml", "") + "_" + pckgEntity.getName()
-										+ ".ecore");
-						Platform.getLog(getClass())
-								.info(String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(),
-										genEntry.getUri().getPath().replace(".mml", "") + "_" + pckgEntity.getName()
-												+ ".ecore"));
-					}
-				}
-				Platform.getLog(getClass()).info("Ecore created!");
-			}
-		}
-	}
-
-	@FXML
-	private void quitEditor() {
-		Platform.getLog(getClass()).info("Quit editor");
-		Platform.getLog(getClass()).info("Worker state: " + webView.getEngine().getLoadWorker().getState().name());
-		Platform.getLog(getClass())
-				.info("documentProperty: " + webView.getEngine().documentProperty() == null ? "isNull" : "isNotNull");
-		
-		
-		/// -
-		
 		Platform.getLog(getClass()).info("Export model");
 		String genResult = (String) webView.getEngine().executeScript("getCombinedGeneratorResult()");
 		Platform.getLog(getClass()).info(genResult.toString());
@@ -212,20 +164,34 @@ public class MmlEditorController implements Initializable {
 				Platform.getLog(getClass()).info("==========[Building ecore]==========");
 				List<EcoreTypeGraphBuilder> builders = new ArrayList();
 				for (GeneratorEntry genEntry : desGen.getGeneratorStorage()) {
+					String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
+					Path modelsDir = Paths.get(basePath.toString(),projectName,"models");
+					try {
+						Files.createDirectories(modelsDir);
+					} catch (IOException ex) {
+						Platform.getLog(getClass()).info("[MODEL PATH BUILDER] Could not create models directory: "+modelsDir.toString());	
+					}
 					ModelEntity model = genEntry.getModel();
 					for (PackageEntity pckgEntity : model.getPackages()) {
-						builders.add(new EcoreTypeGraphBuilder(pckgEntity, genEntry.getUri().toString() + "/" + pckgEntity.getName(),basePath.toPath().toString() + "\\"
-										+ genEntry.getUri().getPath().replace(".mml", "") + "_" + pckgEntity.getName()
-										+ ".ecore"));
-						Platform.getLog(getClass())
-								.info(String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(),
-										genEntry.getUri().getPath().replace(".mml", "") + "_" + pckgEntity.getName()
-												+ ".ecore"));
+						String fileName = Path.of(genEntry.getUri()).getFileName().toString().replace(".mml", "")+"_" + pckgEntity.getName()
+						+ ".ecore";
+						Path filePath = Paths.get(modelsDir.toString(),fileName);
+						String packageUri = String.format("platform:/resource/%s/models/%s", projectName,fileName);
+						builders.add(new EcoreTypeGraphBuilder(pckgEntity, packageUri,filePath.toString()));
+						Platform.getLog(getClass()).info(String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(),filePath.toString()));
 					}
 				}
 				EcoreTypeGraphBuilder.buildEcoreFile(builders);
 				Platform.getLog(getClass()).info("Ecore created!");
 			}
 		}
+	}
+
+	@FXML
+	private void quitEditor() {
+		Platform.getLog(getClass()).info("Quit editor");
+		Platform.getLog(getClass()).info("Worker state: " + webView.getEngine().getLoadWorker().getState().name());
+		Platform.getLog(getClass())
+				.info("documentProperty: " + webView.getEngine().documentProperty() == null ? "isNull" : "isNotNull");
 	}
 }

@@ -117,10 +117,10 @@ public class EcoreTypeGraphBuilder {
 			resolver.resolveAttributeEnum(attribute, (AttributeEntity<String>) attr);
 		}else {
 			attribute.setEType(mapETypes(attr.getType()));
-		}
-		
-		if (attr.isHasDefaultValue()) {
-			attribute.setDefaultValue(attr.getDefaultValue());
+			
+			if (attr.isHasDefaultValue()) {
+				attribute.setDefaultValue(attr.getDefaultValue());
+			}
 		}
 		
 		attribute.setOrdered(attr.getModifiers().isOrdered());

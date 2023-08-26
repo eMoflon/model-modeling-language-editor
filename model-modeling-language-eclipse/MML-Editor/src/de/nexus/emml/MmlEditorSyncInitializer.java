@@ -2,13 +2,22 @@ package de.nexus.emml;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Platform;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class MmlEditorSyncInitializer {
 	private final ArrayList<MmlEditorSyncItem> models = new ArrayList<>();
@@ -40,10 +49,11 @@ public class MmlEditorSyncInitializer {
 					try {
 						String childContent = readFile(child);
 						Platform.getLog(EditorActivator.getDefault().getBundle())
-						.info("[PATH MODIFIER] child: "+child.toString());
+								.info("[PATH MODIFIER] child: " + child.toString());
 						Platform.getLog(EditorActivator.getDefault().getBundle())
-						.info("[PATH MODIFIER] relativize: "+base.toPath().relativize(child).toString());
-						initializer.models.add(new MmlEditorSyncItem(base.toPath().relativize(child).toString(), childContent));
+								.info("[PATH MODIFIER] relativize: " + base.toPath().relativize(child).toString());
+						initializer.models
+								.add(new MmlEditorSyncItem(base.toPath().relativize(child).toString(), childContent));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -55,7 +65,40 @@ public class MmlEditorSyncInitializer {
 		}
 		return initializer;
 	}
-	
+
+	public static MmlEditorSyncResult parseAndOverwrite(File base, String initializerString) {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info(
+				"[WORKSPACE LOADER] LOAD SYNC ITEMS FROM INITIALIZER FOR BASE (" + base.getAbsolutePath() + ")...");
+		Type listType = new TypeToken<ArrayList<MmlEditorSyncItem>>() {
+		}.getType();
+		ArrayList<MmlEditorSyncItem> modelList = new Gson().fromJson(initializerString, listType);
+		int success = 0;
+		int processed = 0;
+		for (MmlEditorSyncItem item : modelList) {
+			if (item.getPath().startsWith("file:///")) {
+				String filePath = item.getPath().replaceFirst("file:///", "");
+				Path absoluteFilePath = Path.of(base.getAbsolutePath().toString(), filePath);
+				Platform.getLog(EditorActivator.getDefault().getBundle())
+						.info("[WORKSPACE SYNC] (1) " + base.toString());
+				Platform.getLog(EditorActivator.getDefault().getBundle()).info("[WORKSPACE SYNC] (2) " + filePath);
+				Platform.getLog(EditorActivator.getDefault().getBundle())
+						.info("[WORKSPACE SYNC] (3) " + absoluteFilePath.toString());
+				processed++;
+				try {
+					Files.writeString(absoluteFilePath, item.getText());
+					success++;
+				} catch (IOException e) {
+					Platform.getLog(EditorActivator.getDefault().getBundle())
+							.info("[WORKSPACE SYNC] Could not write file: " + absoluteFilePath.toString());
+					e.printStackTrace();
+				}
+			}
+		}
+		Platform.getLog(EditorActivator.getDefault().getBundle())
+				.info(String.format("[WORKSPACE SYNC] Successfully saved %d of %d models!", success, processed));
+		return new MmlEditorSyncResult(processed, success);
+	}
+
 	private static String readFile(Path filePath) throws IOException {
 		return Files.readString(filePath);
 	}

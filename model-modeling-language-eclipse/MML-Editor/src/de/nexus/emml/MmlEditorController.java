@@ -148,11 +148,18 @@ public class MmlEditorController implements Initializable {
 	@FXML
 	private void saveFile() {
 		Platform.getLog(getClass()).info("Save file");
+		String exportedWorkspace = (String) webView.getEngine().executeScript("exportWorkspace()");
+		Platform.getLog(getClass()).info(exportedWorkspace.toString());
+		MmlEditorSyncResult result = MmlEditorSyncInitializer.parseAndOverwrite(basePath, exportedWorkspace);
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("ModelModelingLanguage - Editor");
+		alert.setHeaderText("Saved models!");
+		alert.setContentText(String.format("Successfully saved %d of %d models!", result.success(), result.processed()));
+		alert.showAndWait();
 	}
 
 	@FXML
 	private void exportModel() {
-		Platform.getLog(getClass()).info("Export model");
 		Platform.getLog(getClass()).info("Export model");
 		String genResult = (String) webView.getEngine().executeScript("getCombinedGeneratorResult()");
 		Platform.getLog(getClass()).info(genResult.toString());

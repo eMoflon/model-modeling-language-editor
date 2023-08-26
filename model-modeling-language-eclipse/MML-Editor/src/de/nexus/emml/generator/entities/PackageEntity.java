@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class PackageEntity {
+	private String referenceId;
 	private String name;
 	private ArrayList<AbstractClassEntity> abstractClasses;
-	private ArrayList<EnumEntity> enums;
+	private ArrayList<EnumEntity<?>> enums;
 	private ArrayList<PackageEntity> subPackages;
+	
+	public String getReferenceId() {
+		return referenceId;
+	}
 
 	public String getName() {
 		return name;
@@ -17,7 +22,7 @@ public class PackageEntity {
 		return abstractClasses;
 	}
 
-	public ArrayList<EnumEntity> getEnums() {
+	public ArrayList<EnumEntity<?>> getEnums() {
 		return enums;
 	}
 

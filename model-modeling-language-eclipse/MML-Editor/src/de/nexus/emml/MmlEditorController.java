@@ -17,10 +17,13 @@ import com.google.gson.Gson;
 
 import de.nexus.emml.generator.DeserializedGenerator;
 import de.nexus.emml.generator.EcoreTypeGraphBuilder;
+import de.nexus.emml.generator.EcoreTypeResolver;
 import de.nexus.emml.generator.GeneratorDeserializer;
 import de.nexus.emml.generator.GeneratorEntry;
 import de.nexus.emml.generator.entities.ModelEntity;
 import de.nexus.emml.generator.entities.PackageEntity;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,8 +31,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.util.Duration;
 
 public class MmlEditorController implements Initializable {
 
@@ -48,6 +53,9 @@ public class MmlEditorController implements Initializable {
 	@FXML
 	private MenuItem quitMenuItem;
 
+	@FXML
+	private VBox loadingVBox;
+
 	private WebEngine engine;
 
 	private File basePath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
@@ -63,13 +71,12 @@ public class MmlEditorController implements Initializable {
 		this.engine = webView.getEngine();
 		webView.getEngine().getLoadWorker().stateProperty().addListener(x -> {
 			if (webView.getEngine().getLoadWorker().getState().equals(State.FAILED)) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}
-				Platform.getLog(getClass()).info("[WORKER STATE OBSERVER] Worker failed - reloading...");
-				updateWebView();
+				Timeline tl = new Timeline(new KeyFrame(Duration.seconds(1), ae -> {
+					Platform.getLog(getClass()).info("[WORKER STATE OBSERVER] Worker failed - reloading...");
+					updateWebView();
+				}));
+				tl.setCycleCount(1);
+				tl.play();
 			}
 			Platform.getLog(getClass()).info("[LIFECYCLE] " + webView.getEngine().getLoadWorker().getState().name());
 			Platform.getLog(getClass())
@@ -96,6 +103,8 @@ public class MmlEditorController implements Initializable {
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] INITIALIZED SUCCSSFULLY");
 					String modelId = getLastClickedFileModelName();
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] openModelResult: " + openModel(modelId));
+					this.loadingVBox.setDisable(true);
+					this.loadingVBox.setVisible(false);
 				} else {
 					Platform.getLog(getClass())
 							.info(String.format(
@@ -104,6 +113,8 @@ public class MmlEditorController implements Initializable {
 				}
 			}
 		});
+		this.loadingVBox.setDisable(false);
+		this.loadingVBox.setVisible(true);
 		updateWebView();
 	}
 
@@ -132,7 +143,6 @@ public class MmlEditorController implements Initializable {
 		int port = EditorActivator.MML_LS_PORT;
 		engine.load("http://localhost:" + String.valueOf(port));
 		webView.setVisible(true);
-
 	}
 
 	@FXML
@@ -162,26 +172,29 @@ public class MmlEditorController implements Initializable {
 				Platform.getLog(getClass()).info("Deserialization completed!");
 				Platform.getLog(getClass()).info(modEntity.toString());
 				Platform.getLog(getClass()).info("==========[Building ecore]==========");
-				List<EcoreTypeGraphBuilder> builders = new ArrayList();
+				List<EcoreTypeGraphBuilder> builders = new ArrayList<>();
+				EcoreTypeResolver resolver = new EcoreTypeResolver();
 				for (GeneratorEntry genEntry : desGen.getGeneratorStorage()) {
 					String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
-					Path modelsDir = Paths.get(basePath.toString(),projectName,"models");
+					Path modelsDir = Paths.get(basePath.toString(), projectName, "models");
 					try {
 						Files.createDirectories(modelsDir);
 					} catch (IOException ex) {
-						Platform.getLog(getClass()).info("[MODEL PATH BUILDER] Could not create models directory: "+modelsDir.toString());	
+						Platform.getLog(getClass()).info(
+								"[MODEL PATH BUILDER] Could not create models directory: " + modelsDir.toString());
 					}
 					ModelEntity model = genEntry.getModel();
 					for (PackageEntity pckgEntity : model.getPackages()) {
-						String fileName = Path.of(genEntry.getUri()).getFileName().toString().replace(".mml", "")+"_" + pckgEntity.getName()
-						+ ".ecore";
-						Path filePath = Paths.get(modelsDir.toString(),fileName);
-						String packageUri = String.format("platform:/resource/%s/models/%s", projectName,fileName);
-						builders.add(new EcoreTypeGraphBuilder(pckgEntity, packageUri,filePath.toString()));
-						Platform.getLog(getClass()).info(String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(),filePath.toString()));
+						String fileName = Path.of(genEntry.getUri()).getFileName().toString().replace(".mml", "") + "_"
+								+ pckgEntity.getName() + ".ecore";
+						Path filePath = Paths.get(modelsDir.toString(), fileName);
+						String packageUri = String.format("platform:/resource/%s/models/%s", projectName, fileName);
+						builders.add(new EcoreTypeGraphBuilder(pckgEntity, packageUri, filePath.toString(), resolver));
+						Platform.getLog(getClass()).info(
+								String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(), filePath.toString()));
 					}
 				}
-				EcoreTypeGraphBuilder.buildEcoreFile(builders);
+				EcoreTypeGraphBuilder.buildEcoreFile(builders, resolver);
 				Platform.getLog(getClass()).info("Ecore created!");
 			}
 		}

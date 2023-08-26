@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class EnumEntity<T> {
-	private String refereceId;
+	private String referenceId;
 	private String name;
 	private String type;
 	private ArrayList<EnumEntryEntity<T>> entries;
 
-	public String getRefereceId() {
-		return refereceId;
+	public String getReferenceId() {
+		return referenceId;
 	}
 
 	public String getName() {

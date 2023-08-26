@@ -11,6 +11,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcoreFactory;
@@ -23,17 +25,24 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import de.nexus.emml.generator.entities.AbstractClassEntity;
 import de.nexus.emml.generator.entities.AttributeEntity;
 import de.nexus.emml.generator.entities.CReferenceEntity;
+import de.nexus.emml.generator.entities.EnumEntity;
+import de.nexus.emml.generator.entities.EnumEntryEntity;
 import de.nexus.emml.generator.entities.PackageEntity;
 
 public class EcoreTypeGraphBuilder {
 	private final EPackage ePackage;
 	private final String exportPath;
+	private final EcoreTypeResolver resolver;
 	
-	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, String exportPath) {
+	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, String exportPath, EcoreTypeResolver resolver) {
 		this.ePackage = createPackage(pckg.getName(), pckg.getName(), targetUri);
 		this.exportPath = exportPath;
+		this.resolver = resolver;
+		
+		resolver.store(pckg.getReferenceId(), this.ePackage);
+		
 		pckg.getSubPackages().forEach(subPckg -> {
-			EPackage subPackage = new EcoreTypeGraphBuilder(subPckg, targetUri).getAsSubpackage();
+			EPackage subPackage = new EcoreTypeGraphBuilder(subPckg, targetUri,resolver).getAsSubpackage();
 			this.ePackage.getESubpackages().add(subPackage);
 		});
 		pckg.getAbstractClasses().forEach(ab -> {
@@ -41,13 +50,19 @@ public class EcoreTypeGraphBuilder {
 			ab.getAttributes().forEach(attr -> addAttribute(clss, attr, false));
 			ab.getReferences().forEach(cref -> addReference(clss, cref));
 		});
+		pckg.getEnums().forEach(enm -> {
+			EEnum enmm = createEEnum(enm);
+			enm.getEntries().forEach(ee -> addEEnumLiteral(enmm,(EnumEntryEntity<?>) ee));
+		});
 	}
 	
-	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri) {
-		this(pckg,targetUri, null);
+	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, EcoreTypeResolver resolver) {
+		this(pckg,targetUri, null, resolver);
 	}
 	
-	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList) {
+	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList, EcoreTypeResolver resolver) {
+		resolver.resolveUnresovedTypes();
+		
 		for (EcoreTypeGraphBuilder builder : graphBuilderList) {
 			builder.ePackage.eClass();
 		}
@@ -57,7 +72,7 @@ public class EcoreTypeGraphBuilder {
 
 		// Obtain a new resource set
 		ResourceSet resSet = new ResourceSetImpl();
-		List<Resource> resources = new ArrayList();
+		List<Resource> resources = new ArrayList<>();
 		// create a resource
 		try {
 			for (EcoreTypeGraphBuilder builder : graphBuilderList) {
@@ -81,53 +96,32 @@ public class EcoreTypeGraphBuilder {
 				e.printStackTrace();
 			}	
 		}
-	}
-
-	public void toEcoreFile(String path) {
-		/* Initialize your EPackage */
-		ePackage.eClass();
-		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-		Map<String, Object> m = reg.getExtensionToFactoryMap();
-		/* add default .ecore extension for ecore file */
-		m.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());
-
-		// Obtain a new resource set
-		ResourceSet resSet = new ResourceSetImpl();
-		// create a resource
-		Resource resource = null;
-		try {
-			resource = resSet.createResource(URI.createFileURI(path));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		/*
-		 * add your EPackage as root, everything is hierarchical included in this first
-		 * node
-		 */
-		resource.getContents().add(ePackage);
-
-		// now save the content.
-		try {
-			resource.save(Collections.EMPTY_MAP);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	}	
 	
 	public EPackage getAsSubpackage() {
 		return this.ePackage;
 	}
 
-	private void addAttribute(EClass containerClass, AttributeEntity attr, boolean isId) {
+	@SuppressWarnings("unchecked")
+	private void addAttribute(EClass containerClass, AttributeEntity<?> attr, boolean isId) {
 		final EAttribute attribute = EcoreFactory.eINSTANCE.createEAttribute();
+		resolver.store(attr.getReferenceId(), attribute);
 		// always add to container first
 		containerClass.getEStructuralFeatures().add(attribute);
 		attribute.setName(attr.getName());
-		attribute.setEType(mapETypes(attr.getType()));
 		attribute.setID(isId);
 		attribute.setLowerBound(0);
 		attribute.setUpperBound(1);
+		
+		if (attr.isEnumType()) {
+			resolver.resolveAttributeEnum(attribute, (AttributeEntity<String>) attr);
+		}else {
+			attribute.setEType(mapETypes(attr.getType()));
+		}
+		
+		if (attr.isHasDefaultValue()) {
+			attribute.setDefaultValue(attr.getDefaultValue());
+		}
 		
 		attribute.setOrdered(attr.getModifiers().isOrdered());
 		attribute.setTransient(attr.getModifiers().isTransient());
@@ -139,14 +133,30 @@ public class EcoreTypeGraphBuilder {
 
 	private void addReference(EClass containerClass, CReferenceEntity cref) {
 		final EReference reference = EcoreFactory.eINSTANCE.createEReference();
+		resolver.store(cref.getReferenceId(), reference);
 		// always add to container first
 		containerClass.getEStructuralFeatures().add(reference);
 		reference.setName(cref.getName());
 
-		// TODO: Set correct values
-		reference.setEType(EcorePackage.Literals.ESTRING);
-		reference.setLowerBound(0);
-		reference.setUpperBound(1);
+		resolver.resolveReference(reference, cref);
+		
+		if (cref.getMultiplicity().isLowerIsN0()) {
+			reference.setLowerBound(0);	
+		}else if (cref.getMultiplicity().isLowerIsN()) {
+			reference.setLowerBound(1);
+		}else {
+			reference.setLowerBound(cref.getMultiplicity().getLower());
+		}
+		
+		if (cref.getMultiplicity().isHasUpperBound()) {
+			if (cref.getMultiplicity().isUpperIsN0()) {
+				reference.setUpperBound(0);	
+			}else if (cref.getMultiplicity().isUpperIsN()) {
+				reference.setUpperBound(1);
+			}else {
+				reference.setUpperBound(cref.getMultiplicity().getUpper());
+			}
+		}
 		
 		reference.setChangeable(!cref.getModifiers().isReadonly());
 		reference.setVolatile(cref.getModifiers().isVolatile());
@@ -168,11 +178,31 @@ public class EcoreTypeGraphBuilder {
 
 	private EClass createEClass(final AbstractClassEntity ace) {
 		final EClass eClass = EcoreFactory.eINSTANCE.createEClass();
+		resolver.store(ace.getReferenceId(), eClass);
 		eClass.setName(ace.getName());
 		eClass.setAbstract(ace.isAbstract());
 		eClass.setInterface(ace.isInterface());
 		this.ePackage.getEClassifiers().add(eClass);
 		return eClass;
+	}
+	
+	private EEnum createEEnum(final EnumEntity<?> ee) {
+		final EEnum eenum = EcoreFactory.eINSTANCE.createEEnum();
+		resolver.store(ee.getReferenceId(), eenum);
+		eenum.setName(ee.getName());
+		this.ePackage.getEClassifiers().add(eenum);
+		return eenum;
+	}
+	
+	private EEnumLiteral addEEnumLiteral(final EEnum ee,final EnumEntryEntity<?> eee) {
+		final EEnumLiteral eenumLit = EcoreFactory.eINSTANCE.createEEnumLiteral();
+		resolver.store(eee.getReferenceId(), ee);
+		eenumLit.setName(eee.getName());
+		if (eee.isHasDefaultValue()) {
+			eenumLit.setValue(Integer.valueOf(eee.getDefaultValue().toString()));
+		}
+		ee.getELiterals().add(eenumLit);
+		return eenumLit;
 	}
 	
 	private EDataType mapETypes(String mmlType) {

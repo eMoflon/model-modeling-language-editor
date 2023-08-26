@@ -1,0 +1,137 @@
+package de.nexus.emml.generator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+
+import de.nexus.emml.generator.entities.AttributeEntity;
+import de.nexus.emml.generator.entities.CReferenceEntity;
+
+public class EcoreTypeResolver {
+	private final Map<String, EClassifier> classifiers = new HashMap<String, EClassifier>();
+	private final Map<String, EReference> references = new HashMap<String, EReference>();
+	private final Map<String, EAttribute> attributes = new HashMap<String, EAttribute>();
+	private final Map<String, EPackage> packages = new HashMap<String, EPackage>();
+	private final Map<EReference,String> unresolvedReferenceTypes = new HashMap<EReference, String>();
+	private final Map<EReference,String> unresolvedReferenceOpposites = new HashMap<EReference, String>();
+	private final Map<EAttribute, String> unresolvedAttributeEnumTypes = new HashMap<EAttribute, String>();
+	private final Map<EAttribute, String> unresolvedAttributeEnumValues = new HashMap<EAttribute, String>();
+	
+	public void store(String classId, EClassifier classifier) {
+	this.classifiers.put(classId, classifier);
+	}
+	
+	public void store(String refId, EReference reference) {
+		this.references.put(refId, reference);
+	}
+	
+	public void store(String attrId, EAttribute attibute) {
+		this.attributes.put(attrId, attibute);
+	}
+	
+	public void store(String pckgId, EPackage packagee) {
+		this.packages.put(pckgId, packagee);
+	}
+	
+	public void dumpResolverStorage() {
+		Platform.getLog(getClass()).info("================[ERROR]================");
+		Platform.getLog(getClass()).info("==========[EcoreTypeResolver]==========");
+		Platform.getLog(getClass()).info("### Packages");
+		for (String key : this.packages.keySet()) {
+			Platform.getLog(getClass()).info(String.format("	- %s",key));	
+		}
+		Platform.getLog(getClass()).info("### Classifiers");
+		for (String key : this.classifiers.keySet()) {
+			Platform.getLog(getClass()).info(String.format("	- %s",key));	
+		}
+		Platform.getLog(getClass()).info("### Attributes");
+		for (String key : this.attributes.keySet()) {
+			Platform.getLog(getClass()).info(String.format("	- %s",key));	
+		}
+		Platform.getLog(getClass()).info("### References");
+		for (String key : this.references.keySet()) {
+			Platform.getLog(getClass()).info(String.format("	- %s",key));	
+		}
+		Platform.getLog(getClass()).info("================[ERROR]================");
+	}
+	
+	public void resolveReference(EReference ref, CReferenceEntity refEntity) {
+		String typeId = refEntity.getType();
+		if (classifiers.containsKey(typeId)) {
+			ref.setEType(classifiers.get(typeId));
+		}else {
+			unresolvedReferenceTypes.put(ref,typeId);
+		}
+		
+		if (refEntity.isHasOpposite()) {
+			String oppositeId = refEntity.getOpposite();
+			if (classifiers.containsKey(oppositeId)) {
+				ref.setEType(classifiers.get(oppositeId));
+			}else {
+				unresolvedReferenceOpposites.put(ref,typeId);
+			}
+		}
+	}
+	
+	public void resolveAttributeEnum(EAttribute attr, AttributeEntity<String> attrEntity) {
+		if (!attrEntity.isEnumType()) {
+			return;
+		}
+		
+		String typeId = attrEntity.getType();
+		if (classifiers.containsKey(typeId)) {
+			attr.setEType(classifiers.get(typeId));
+		}else {
+			unresolvedAttributeEnumTypes.put(attr,typeId);
+		}
+		
+		if (attrEntity.isHasDefaultValue()) {
+			String valueId = attrEntity.getDefaultValue();
+			if (classifiers.containsKey(valueId)) {
+				attr.setDefaultValue(valueId);
+			}else {
+				unresolvedAttributeEnumValues.put(attr,typeId);
+			}
+		}
+	}
+	
+	public void resolveUnresovedTypes() {
+		for (Map.Entry<EReference, String> refEntry : this.unresolvedReferenceTypes.entrySet()) {
+			EReference ref = refEntry.getKey();
+			String typeId = refEntry.getValue();
+			if (classifiers.containsKey(typeId)) {
+				ref.setEType(classifiers.get(typeId));
+			}else {
+				dumpResolverStorage();
+				throw new IllegalArgumentException("Could not resolve classId: "+typeId);
+			}
+		}
+		
+		for (Map.Entry<EReference, String> refEntry : this.unresolvedReferenceOpposites.entrySet()) {
+			EReference ref = refEntry.getKey();
+			String typeId = refEntry.getValue();
+			if (references.containsKey(typeId)) {
+				ref.setEOpposite(references.get(typeId));
+			}else {
+				dumpResolverStorage();
+				throw new IllegalArgumentException("Could not resolve referenceId: "+typeId);
+			}
+		}
+		
+		for (Map.Entry<EAttribute, String> attrEntry : this.unresolvedAttributeEnumTypes.entrySet()) {
+			EAttribute attr = attrEntry.getKey();
+			String typeId = attrEntry.getValue();
+			if (classifiers.containsKey(typeId)) {
+				attr.setEType(classifiers.get(typeId));
+			}else {
+				dumpResolverStorage();
+				throw new IllegalArgumentException("Could not resolve enumId: "+typeId);
+			}
+		}
+	}
+}

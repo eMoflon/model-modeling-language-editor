@@ -46536,16 +46536,15 @@ var require_model_modeling_language_formatter = __commonJS({
             oppoFormatter.property("reference").prepend(langium_1.Formatting.oneSpace());
             oppoFormatter.property("reference").append(langium_1.Formatting.newLine());
           }
+          formatter.property("type").prepend(langium_1.Formatting.oneSpace());
           if (node.multiplicity != void 0) {
-            formatter.property("type").prepend(langium_1.Formatting.oneSpace()).append(langium_1.Formatting.noSpace());
+            formatter.property("type").append(langium_1.Formatting.noSpace());
             const multiFormatter = this.getNodeFormatter(node.multiplicity);
             multiFormatter.keyword("[").append(langium_1.Formatting.noSpace());
             multiFormatter.keyword("]").prepend(langium_1.Formatting.noSpace());
             if (node.multiplicity.upperMult != void 0) {
               multiFormatter.keyword("..").surround(langium_1.Formatting.noSpace());
             }
-          } else {
-            formatter.property("type").prepend(langium_1.Formatting.oneSpace()).append(langium_1.Formatting.oneSpace());
           }
           formatter.property("name").prepend(langium_1.Formatting.oneSpace());
           if (node.modifiers != void 0) {
@@ -47337,6 +47336,7 @@ var require_mml_entity_templates = __commonJS({
     var mml_serializer_context_1 = require_mml_serializer_context();
     var AttributeEntity = class {
       constructor(attr, referenceStorage) {
+        this.referenceId = referenceStorage.getNodeReferenceId(attr);
         this.name = attr.name;
         if (attr.type.ptype != void 0 && attr.type.etype == void 0) {
           this.type = attr.type.ptype;
@@ -47479,6 +47479,7 @@ var require_mml_entity_templates = __commonJS({
         this.abstractClasses = [];
         this.enums = [];
         this.subPackages = [];
+        this.referenceId = referenceStorage.getNodeReferenceId(pckg);
         this.name = pckg.name;
         pckg.subPackages.forEach((subPackage) => this.subPackages.push(new PackageEntity(subPackage, referenceStorage)));
         pckg.body.forEach((abstractElement) => {

@@ -170,12 +170,28 @@ export function getCombinedGeneratorResult(): string {
     return JSON.stringify(combinedResult);
 }
 
+export function exportWorkspace() {
+    const models: monaco.editor.ITextModel[] = monaco.editor.getModels();
+
+    interface IModel {
+        path: string,
+        text: string
+    }
+
+    const preprocessedModels: IModel[] = models.map(model => <IModel>{
+        path: model.uri.toString(),
+        text: model.getValue(monaco.editor.EndOfLinePreference.TextDefined, true)
+    });
+    return JSON.stringify(preprocessedModels);
+}
+
 declare global {
     interface Window {
         getCombinedGeneratorResult: any;
         initializeWorkspaceJson: any;
         openModel: any;
         updateModel: any;
+        exportWorkspace: any;
     }
 }
 
@@ -183,3 +199,4 @@ window.getCombinedGeneratorResult = getCombinedGeneratorResult;
 window.initializeWorkspaceJson = initializeWorkspaceJson;
 window.openModel = openModel;
 window.updateModel = updateModel;
+window.exportWorkspace = exportWorkspace;

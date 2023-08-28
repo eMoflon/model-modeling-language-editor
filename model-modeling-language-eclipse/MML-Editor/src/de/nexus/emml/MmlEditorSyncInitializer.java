@@ -65,8 +65,24 @@ public class MmlEditorSyncInitializer {
 		}
 		return initializer;
 	}
+	
+	public static MmlEditorSyncInitializer buildExcludingCurrent(File base, String modelId) {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info(
+				"[WORKSPACE LOADER] LOAD INITIALIZER EXCLUDING MODEL WITH ID: "+modelId);
+		MmlEditorSyncInitializer initializer = MmlEditorSyncInitializer.build(base);
+		initializer.models.removeIf(e -> e.getPath().replace("\\", "/").equals(modelId.replace("\\", "/")));
+		return initializer;
+	}
+	
+	public static MmlEditorSyncInitializer buildCurrent(File base, String modelId) {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info(
+				"[WORKSPACE LOADER] LOAD INITIALIZER FOR MODEL WITH ID: "+modelId);
+		MmlEditorSyncInitializer initializer = MmlEditorSyncInitializer.build(base);
+		initializer.models.removeIf(e -> !e.getPath().replace("\\", "/").equals(modelId.replace("\\", "/")));
+		return initializer;
+	}
 
-	public static MmlEditorSyncResult parseAndOverwrite(File base, String initializerString) {
+	public static MmlEditorSyncResult parseAndOverwriteAllFiles(File base, String initializerString) {
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info(
 				"[WORKSPACE LOADER] LOAD SYNC ITEMS FROM INITIALIZER FOR BASE (" + base.getAbsolutePath() + ")...");
 		Type listType = new TypeToken<ArrayList<MmlEditorSyncItem>>() {
@@ -85,7 +101,7 @@ public class MmlEditorSyncInitializer {
 						.info("[WORKSPACE SYNC] (3) " + absoluteFilePath.toString());
 				processed++;
 				try {
-					Files.writeString(absoluteFilePath, item.getText());
+					writeFile(absoluteFilePath, item.getText());
 					success++;
 				} catch (IOException e) {
 					Platform.getLog(EditorActivator.getDefault().getBundle())
@@ -98,8 +114,51 @@ public class MmlEditorSyncInitializer {
 				.info(String.format("[WORKSPACE SYNC] Successfully saved %d of %d models!", success, processed));
 		return new MmlEditorSyncResult(processed, success);
 	}
+	
+	public static MmlEditorSyncResult parseAndOverwrite(File base, String initializerString,String modelId) {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info(
+				"[WORKSPACE LOADER] LOAD SYNC ITEMS FROM INITIALIZER FOR BASE (" + base.getAbsolutePath() + ")...");
+		Type listType = new TypeToken<ArrayList<MmlEditorSyncItem>>() {
+		}.getType();
+		ArrayList<MmlEditorSyncItem> modelList = new Gson().fromJson(initializerString, listType);
+		int success = 0;
+		int processed = 0;
+		for (MmlEditorSyncItem item : modelList) {
+			if (item.getPath().startsWith("file:///")) {
+				String filePath = item.getPath().replaceFirst("file:///", "");
+				if (!filePath.equals(modelId)) {
+					Platform.getLog(EditorActivator.getDefault().getBundle())
+					.info("[WORKSPACE SYNC] Id does not match: " + filePath +" != "+modelId);
+					continue;
+				}
+				Path absoluteFilePath = Path.of(base.getAbsolutePath().toString(), filePath);
+				Platform.getLog(EditorActivator.getDefault().getBundle())
+						.info("[WORKSPACE SYNC] (1) " + base.toString());
+				Platform.getLog(EditorActivator.getDefault().getBundle()).info("[WORKSPACE SYNC] (2) " + filePath);
+				Platform.getLog(EditorActivator.getDefault().getBundle())
+						.info("[WORKSPACE SYNC] (3) " + absoluteFilePath.toString());
+				processed++;
+				try {
+					writeFile(absoluteFilePath, item.getText());
+					success++;
+				} catch (IOException e) {
+					Platform.getLog(EditorActivator.getDefault().getBundle())
+							.info("[WORKSPACE SYNC] Could not write file: " + absoluteFilePath.toString());
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+		Platform.getLog(EditorActivator.getDefault().getBundle())
+				.info(String.format("[WORKSPACE SYNC] Successfully saved %d of %d models!", success, processed));
+		return new MmlEditorSyncResult(processed, success);
+	}
 
 	private static String readFile(Path filePath) throws IOException {
 		return Files.readString(filePath);
+	}
+	
+	private static void writeFile(Path filePath, String text) throws IOException {
+		Files.writeString(filePath, text);
 	}
 }

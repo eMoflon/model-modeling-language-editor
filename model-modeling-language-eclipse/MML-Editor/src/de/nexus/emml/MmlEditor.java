@@ -1,6 +1,7 @@
 package de.nexus.emml;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +18,8 @@ public class MmlEditor extends Application {
 			loader.setClassLoader(getClass().getClassLoader());
 			loader.setLocation(getClass().getResource("MmlEditorDesign.fxml"));
 			
+			javafx.application.Platform.setImplicitExit(false);
+			
 
 			Parent root = loader.load();
 
@@ -29,5 +32,12 @@ public class MmlEditor extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		
+		Platform.exit();
 	}
 }

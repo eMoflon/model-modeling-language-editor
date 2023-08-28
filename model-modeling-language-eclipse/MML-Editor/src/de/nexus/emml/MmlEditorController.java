@@ -14,6 +14,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 
 import com.google.gson.Gson;
+import com.sun.glass.ui.Window;
+import com.sun.javafx.stage.StageHelper;
 
 import de.nexus.emml.generator.DeserializedGenerator;
 import de.nexus.emml.generator.EcoreTypeGraphBuilder;
@@ -34,6 +36,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MmlEditorController implements Initializable {
@@ -42,10 +45,19 @@ public class MmlEditorController implements Initializable {
 	private WebView webView = new WebView();
 
 	@FXML
-	private MenuItem updateMenuItem;
+	private MenuItem updateCurrentMenuItem;
 
 	@FXML
-	private MenuItem saveMenuItem;
+	private MenuItem updateOthersMenuItem;
+
+	@FXML
+	private MenuItem updateAllMenuItem;
+
+	@FXML
+	private MenuItem saveCurrentMenuItem;
+
+	@FXML
+	private MenuItem saveAllMenuItem;
 
 	@FXML
 	private MenuItem exportMenuItem;
@@ -60,6 +72,8 @@ public class MmlEditorController implements Initializable {
 
 	private File basePath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
+	private String lastClickedModelId;
+
 	public MmlEditorController() {
 		Platform.getLog(getClass()).info("Init MmlEditor");
 
@@ -73,7 +87,7 @@ public class MmlEditorController implements Initializable {
 			if (webView.getEngine().getLoadWorker().getState().equals(State.FAILED)) {
 				Timeline tl = new Timeline(new KeyFrame(Duration.seconds(1), ae -> {
 					Platform.getLog(getClass()).info("[WORKER STATE OBSERVER] Worker failed - reloading...");
-					updateWebView();
+					updateAllWebView();
 				}));
 				tl.setCycleCount(1);
 				tl.play();
@@ -115,20 +129,26 @@ public class MmlEditorController implements Initializable {
 		});
 		this.loadingVBox.setDisable(false);
 		this.loadingVBox.setVisible(true);
-		updateWebView();
+		updateAllWebView();
 	}
 
 	private String getLastClickedFileModelName() {
 		Path path = EditorActivator.getDefault().getLastClickedFile();
 		if (path == null) {
-			Alert alert = new Alert(AlertType.ERROR, "Could not determine file to open!", ButtonType.CLOSE);
-			alert.showAndWait();
+			if (this.lastClickedModelId == null) {
+				Alert alert = new Alert(AlertType.ERROR, "Could not determine file to open!", ButtonType.CLOSE);
+				alert.showAndWait();
+			}else {
+				return this.lastClickedModelId;
+			}
 		}
 		String modelId = path.toString().replace("\\", "/");
 		if (modelId.startsWith("/")) {
 			modelId = modelId.replaceFirst("/", "");
 		}
 		Platform.getLog(getClass()).info(String.format("[GETLASTCLICKEDFILE] %s", modelId));
+
+		this.lastClickedModelId = modelId;
 		return modelId;
 	}
 
@@ -137,8 +157,47 @@ public class MmlEditorController implements Initializable {
 	}
 
 	@FXML
-	private void updateWebView() {
-		Platform.getLog(getClass()).info("Update Webview");
+	private void updateCurrentWebView() {
+		Platform.getLog(getClass()).info("Update Webview | Reload current model");
+		Gson gson = new Gson();
+		MmlEditorSyncInitializer syncInitializer = MmlEditorSyncInitializer.buildCurrent(basePath,
+				lastClickedModelId);
+		Platform.getLog(getClass()).info("[EDITOR UPDATER] INITIALIZE FILE UPDATE...");
+		for (MmlEditorSyncItem syncItem : syncInitializer.getModels()) {
+			Platform.getLog(getClass()).info("[EDITOR UPDATER >> ] " + syncItem.getPath()+" | "+lastClickedModelId);
+			String serializedInitializer = gson.toJson(syncItem);
+			String escapedSerializedInitializer = StringEscapeUtils.escapeJavaScript(serializedInitializer);
+			Platform.getLog(getClass()).info("[EDITOR UPDATER] " + escapedSerializedInitializer);
+			boolean updateSuccesful = (boolean) webView.getEngine()
+					.executeScript(String.format("updateModelJson(`%s`)", escapedSerializedInitializer));
+			Platform.getLog(getClass())
+					.info("[EDITOR UPDATER] " + syncItem.getPath() + " -> " + String.valueOf(updateSuccesful));
+		}
+		Platform.getLog(getClass()).info("[EDITOR UPDATER] COMPLETE");
+	}
+
+	@FXML
+	private void updateOthersWebView() {
+		Platform.getLog(getClass()).info("Update Webview | Reload other models");
+		Gson gson = new Gson();
+		MmlEditorSyncInitializer syncInitializer = MmlEditorSyncInitializer.buildExcludingCurrent(basePath,
+				lastClickedModelId);
+		Platform.getLog(getClass()).info("[EDITOR UPDATER] INITIALIZE OTHER FILES UPDATE...");
+		for (MmlEditorSyncItem syncItem : syncInitializer.getModels()) {
+			String serializedInitializer = gson.toJson(syncItem);
+			String escapedSerializedInitializer = StringEscapeUtils.escapeJavaScript(serializedInitializer);
+			Platform.getLog(getClass()).info("[EDITOR UPDATER] " + escapedSerializedInitializer);
+			boolean updateSuccesful = (boolean) webView.getEngine()
+					.executeScript(String.format("updateModelJson(`%s`)", escapedSerializedInitializer));
+			Platform.getLog(getClass())
+					.info("[EDITOR UPDATER] " + syncItem.getPath() + " -> " + String.valueOf(updateSuccesful));
+		}
+		Platform.getLog(getClass()).info("[EDITOR UPDATER] COMPLETE");
+	}
+
+	@FXML
+	private void updateAllWebView() {
+		Platform.getLog(getClass()).info("Update Webview | Full reload");
 		engine.setJavaScriptEnabled(true);
 		int port = EditorActivator.MML_LS_PORT;
 		engine.load("http://localhost:" + String.valueOf(port));
@@ -146,15 +205,31 @@ public class MmlEditorController implements Initializable {
 	}
 
 	@FXML
-	private void saveFile() {
-		Platform.getLog(getClass()).info("Save file");
+	private void saveCurrentFile() {
+		Platform.getLog(getClass()).info("Save current file");
+		saveFile(true);
+	}
+
+	@FXML
+	private void saveAllFiles() {
+		Platform.getLog(getClass()).info("Save all file");
+		saveFile(false);
+	}
+
+	private void saveFile(boolean justCurrent) {
 		String exportedWorkspace = (String) webView.getEngine().executeScript("exportWorkspace()");
 		Platform.getLog(getClass()).info(exportedWorkspace.toString());
-		MmlEditorSyncResult result = MmlEditorSyncInitializer.parseAndOverwrite(basePath, exportedWorkspace);
+		MmlEditorSyncResult result;
+		if (justCurrent) {
+			result = MmlEditorSyncInitializer.parseAndOverwrite(basePath, exportedWorkspace, lastClickedModelId);
+		} else {
+			result = MmlEditorSyncInitializer.parseAndOverwriteAllFiles(basePath, exportedWorkspace);
+		}
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("ModelModelingLanguage - Editor");
 		alert.setHeaderText("Saved models!");
-		alert.setContentText(String.format("Successfully saved %d of %d models!", result.success(), result.processed()));
+		alert.setContentText(
+				String.format("Successfully saved %d of %d models!", result.success(), result.processed()));
 		alert.showAndWait();
 	}
 
@@ -213,5 +288,7 @@ public class MmlEditorController implements Initializable {
 		Platform.getLog(getClass()).info("Worker state: " + webView.getEngine().getLoadWorker().getState().name());
 		Platform.getLog(getClass())
 				.info("documentProperty: " + webView.getEngine().documentProperty() == null ? "isNull" : "isNotNull");
+		//javafx.application.Platform.exit();
+		this.webView.getScene().getWindow().hide();
 	}
 }

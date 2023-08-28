@@ -53,17 +53,33 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="updateMenuItem" mnemonicParsing="false" onAction="#updateWebView" text="Update View">
+              <MenuItem fx:id="updateCurrentMenuItem" mnemonicParsing="false" onAction="#updateCurrentWebView" text="Update current">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="updateOthersMenuItem" mnemonicParsing="false" onAction="#updateOthersWebView" text="Update others">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="updateAllMenuItem" mnemonicParsing="false" onAction="#updateAllWebView" text="Update all">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#saveFile" text="Save">
+                  <MenuItem fx:id="saveCurrentMenuItem" mnemonicParsing="false" onAction="#saveCurrentFile" text="Save current">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
+                  <MenuItem fx:id="saveAllMenuItem" mnemonicParsing="false" onAction="#saveAllFiles" text="Save all">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="exportMenuItem" mnemonicParsing="false" onAction="#exportModel" text="Export model" />
                   <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#quitEditor" text="Close">
                      <accelerator>

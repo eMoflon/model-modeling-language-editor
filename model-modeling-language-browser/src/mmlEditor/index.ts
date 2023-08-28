@@ -127,17 +127,27 @@ export function initializeWorkspaceJson(basepath: string, models: string): numbe
     return initializeWorkspace(basepath, JSON.parse(models));
 }
 
-export function updateModel(modelPath: string, text: string): boolean {
+function updateModel(model: { path: string, text: string }): boolean {
     if (editor == undefined) {
         return false;
     }
     const openedModel: monaco.editor.ITextModel | null = editor.getModel();
-    const targetUri: monaco.Uri = monaco.Uri.parse("file://" + modelPath);
-    if (openedModel != null && openedModel.uri.path == targetUri.path) {
+    const deserializedPath: string = model.path.replace("\\", "/");
+    const targetUri: monaco.Uri = monaco.Uri.parse("file:///" + deserializedPath);
+    //if (openedModel != null && openedModel.uri.path == targetUri.path) {
+    //    return false;
+    //}
+    const targetModel: monaco.editor.ITextModel | null = monaco.editor.getModel(targetUri);
+    if (targetModel == null) {
         return false;
     }
-    monaco.editor.createModel(text, "model-modeling-language", monaco.Uri.parse("file:///" + modelPath));
+    targetModel.setValue(model.text);
     return true;
+}
+
+export function updateModelJson(model: string) {
+    console.log(model);
+    return updateModel(JSON.parse(model));
 }
 
 export function openModel(modelPath: string): boolean {
@@ -190,7 +200,7 @@ declare global {
         getCombinedGeneratorResult: any;
         initializeWorkspaceJson: any;
         openModel: any;
-        updateModel: any;
+        updateModelJson: any;
         exportWorkspace: any;
     }
 }
@@ -198,5 +208,5 @@ declare global {
 window.getCombinedGeneratorResult = getCombinedGeneratorResult;
 window.initializeWorkspaceJson = initializeWorkspaceJson;
 window.openModel = openModel;
-window.updateModel = updateModel;
+window.updateModelJson = updateModelJson;
 window.exportWorkspace = exportWorkspace;

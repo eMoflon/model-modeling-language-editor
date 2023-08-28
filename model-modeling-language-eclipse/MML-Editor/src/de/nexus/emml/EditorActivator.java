@@ -2,12 +2,15 @@ package de.nexus.emml;
 
 import java.nio.file.Path;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import javafx.application.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -68,11 +71,13 @@ public class EditorActivator extends AbstractUIPlugin {
 		if (plugin.langServer == null) {
 			Platform.getLog(getClass()).info("Starting langserver");
 			plugin.langServer = new MmlLanguageServer(MML_LS_PORT);
+			new Thread(() -> Application.launch(MmlEditor.class)).start();
 		} else {
 			Platform.getLog(getClass()).info("Langserver is already running");
+			//new Thread(() -> new MmlEditor().start(new Stage()));
+			javafx.application.Platform.runLater( () -> new MmlEditor().start( new Stage() ) );
 		}
-		new Thread(() -> Application.launch(MmlEditor.class)).start();
-	}
+	}	
 	
 	public Path getLastClickedFile() {
 		Path path = this.lastClickedFile;

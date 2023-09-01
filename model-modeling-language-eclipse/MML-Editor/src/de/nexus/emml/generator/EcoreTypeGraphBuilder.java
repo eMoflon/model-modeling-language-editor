@@ -196,7 +196,7 @@ public class EcoreTypeGraphBuilder {
 	
 	private EEnumLiteral addEEnumLiteral(final EEnum ee,final EnumEntryEntity<?> eee) {
 		final EEnumLiteral eenumLit = EcoreFactory.eINSTANCE.createEEnumLiteral();
-		resolver.store(eee.getReferenceId(), ee);
+		resolver.store(eee.getReferenceId(), eenumLit);
 		eenumLit.setName(eee.getName());
 		if (eee.isHasDefaultValue()) {
 			eenumLit.setValue(Integer.valueOf(eee.getDefaultValue().toString()));

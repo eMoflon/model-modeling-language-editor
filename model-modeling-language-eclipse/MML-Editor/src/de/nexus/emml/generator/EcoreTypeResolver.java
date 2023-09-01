@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -17,6 +18,7 @@ public class EcoreTypeResolver {
 	private final Map<String, EReference> references = new HashMap<String, EReference>();
 	private final Map<String, EAttribute> attributes = new HashMap<String, EAttribute>();
 	private final Map<String, EPackage> packages = new HashMap<String, EPackage>();
+	private final Map<String, EEnumLiteral> elits = new HashMap<String, EEnumLiteral>();
 	private final Map<EReference,String> unresolvedReferenceTypes = new HashMap<EReference, String>();
 	private final Map<EReference,String> unresolvedReferenceOpposites = new HashMap<EReference, String>();
 	private final Map<EAttribute, String> unresolvedAttributeEnumTypes = new HashMap<EAttribute, String>();
@@ -38,6 +40,10 @@ public class EcoreTypeResolver {
 		this.packages.put(pckgId, packagee);
 	}
 	
+	public void store(String elitId, EEnumLiteral enumLiteral) {
+		this.elits.put(elitId, enumLiteral);
+	}
+	
 	public void dumpResolverStorage() {
 		Platform.getLog(getClass()).info("================[ERROR]================");
 		Platform.getLog(getClass()).info("==========[EcoreTypeResolver]==========");
@@ -57,6 +63,10 @@ public class EcoreTypeResolver {
 		for (String key : this.references.keySet()) {
 			Platform.getLog(getClass()).info(String.format("	- %s",key));	
 		}
+		Platform.getLog(getClass()).info("### ELits");
+		for (String key : this.elits.keySet()) {
+			Platform.getLog(getClass()).info(String.format("	- %s",key));	
+		}
 		Platform.getLog(getClass()).info("================[ERROR]================");
 	}
 	
@@ -73,7 +83,7 @@ public class EcoreTypeResolver {
 			if (classifiers.containsKey(oppositeId)) {
 				ref.setEType(classifiers.get(oppositeId));
 			}else {
-				unresolvedReferenceOpposites.put(ref,typeId);
+				unresolvedReferenceOpposites.put(ref,oppositeId);
 			}
 		}
 	}
@@ -92,10 +102,10 @@ public class EcoreTypeResolver {
 		
 		if (attrEntity.isHasDefaultValue()) {
 			String valueId = attrEntity.getDefaultValue();
-			if (classifiers.containsKey(valueId)) {
-				attr.setDefaultValue(valueId);
+			if (elits.containsKey(valueId)) {
+				attr.setDefaultValue(elits.get(valueId).getName());
 			}else {
-				unresolvedAttributeEnumValues.put(attr,typeId);
+				unresolvedAttributeEnumValues.put(attr,valueId);
 			}
 		}
 	}
@@ -131,6 +141,17 @@ public class EcoreTypeResolver {
 			}else {
 				dumpResolverStorage();
 				throw new IllegalArgumentException("Could not resolve enumId: "+typeId);
+			}
+		}
+		
+		for (Map.Entry<EAttribute, String> attrEntry : this.unresolvedAttributeEnumValues.entrySet()) {
+			EAttribute attr = attrEntry.getKey();
+			String typeId = attrEntry.getValue();
+			if (elits.containsKey(typeId)) {
+				attr.setDefaultValue(elits.get(typeId).getName());
+			}else {
+				dumpResolverStorage();
+				throw new IllegalArgumentException("Could not resolve enum valueId: "+typeId);
 			}
 		}
 	}

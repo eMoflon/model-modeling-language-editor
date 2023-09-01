@@ -258,7 +258,7 @@ public class MmlEditorController implements Initializable {
 				EcoreTypeResolver resolver = new EcoreTypeResolver();
 				for (GeneratorEntry genEntry : desGen.getGeneratorStorage()) {
 					String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
-					Path modelsDir = Paths.get(basePath.toString(), projectName, "models");
+					Path modelsDir = Paths.get(basePath.toString(), projectName, "model");
 					try {
 						Files.createDirectories(modelsDir);
 					} catch (IOException ex) {
@@ -270,7 +270,7 @@ public class MmlEditorController implements Initializable {
 						String fileName = Path.of(genEntry.getUri()).getFileName().toString().replace(".mml", "") + "_"
 								+ pckgEntity.getName() + ".ecore";
 						Path filePath = Paths.get(modelsDir.toString(), fileName);
-						String packageUri = String.format("platform:/resource/%s/models/%s", projectName, fileName);
+						String packageUri = String.format("platform:/resource/%s/model/%s", projectName, fileName);
 						builders.add(new EcoreTypeGraphBuilder(pckgEntity, packageUri, filePath.toString(), resolver));
 						Platform.getLog(getClass()).info(
 								String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(), filePath.toString()));

@@ -40390,7 +40390,7 @@ var require_ast2 = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isFunctionVariable = exports2.FunctionVariable = exports2.isFunctionReturn = exports2.FunctionReturn = exports2.isFunctionMacroCall = exports2.FunctionMacroCall = exports2.isFunctionLoop = exports2.FunctionLoop = exports2.isFunctionCall = exports2.FunctionCall = exports2.isFunctionAssignment = exports2.FunctionAssignment = exports2.isFunctionArgument = exports2.FunctionArgument = exports2.isEnumValueExpr = exports2.EnumValueExpr = exports2.isEnumEntry = exports2.EnumEntry = exports2.isEnum = exports2.Enum = exports2.isCReference = exports2.CReference = exports2.isClass = exports2.Class = exports2.isBoolExpr = exports2.BoolExpr = exports2.isBinaryExpression = exports2.BinaryExpression = exports2.isAttributeType = exports2.AttributeType = exports2.isAttributeModifiers = exports2.AttributeModifiers = exports2.isAttribute = exports2.Attribute = exports2.isVariable = exports2.Variable = exports2.isValueExpr = exports2.ValueExpr = exports2.isStatement = exports2.Statement = exports2.isMacroStatement = exports2.MacroStatement = exports2.isInstanceStatement = exports2.InstanceStatement = exports2.isFunctionStatement = exports2.FunctionStatement = exports2.isArithExpr = exports2.ArithExpr = exports2.isAbstractElement = exports2.AbstractElement = void 0;
-    exports2.reflection = exports2.ModelModelingLanguageAstReflection = exports2.isVariableValueExpr = exports2.VariableValueExpr = exports2.isVariableType = exports2.VariableType = exports2.isUntypedVariable = exports2.UntypedVariable = exports2.isTypedVariable = exports2.TypedVariable = exports2.isStringExpr = exports2.StringExpr = exports2.isReferenceModifiers = exports2.ReferenceModifiers = exports2.isPackage = exports2.Package = exports2.isOppositeAnnotation = exports2.OppositeAnnotation = exports2.isNumberExpr = exports2.NumberExpr = exports2.isMultiplicitySpec = exports2.MultiplicitySpec = exports2.isMultiplicity = exports2.Multiplicity = exports2.isModel = exports2.Model = exports2.isMacroInstance = exports2.MacroInstance = exports2.isMacroAttributeStatement = exports2.MacroAttributeStatement = exports2.isMacroAssignStatement = exports2.MacroAssignStatement = exports2.isInterface = exports2.Interface = exports2.isInstanceLoop = exports2.InstanceLoop = exports2.isImportAlias = exports2.ImportAlias = exports2.isImport = exports2.Import = exports2.isImplicitlyTypedValue = exports2.ImplicitlyTypedValue = exports2.isIMacro = exports2.IMacro = exports2.isIInstance = exports2.IInstance = exports2.isIFunction = exports2.IFunction = void 0;
+    exports2.reflection = exports2.ModelModelingLanguageAstReflection = exports2.isVariableValueExpr = exports2.VariableValueExpr = exports2.isVariableType = exports2.VariableType = exports2.isUntypedVariable = exports2.UntypedVariable = exports2.isTypedVariable = exports2.TypedVariable = exports2.isStringExpr = exports2.StringExpr = exports2.isReferenceModifiers = exports2.ReferenceModifiers = exports2.isPackage = exports2.Package = exports2.isOppositeAnnotation = exports2.OppositeAnnotation = exports2.isNumberExpr = exports2.NumberExpr = exports2.isMultiplicitySpec = exports2.MultiplicitySpec = exports2.isMultiplicity = exports2.Multiplicity = exports2.isModel = exports2.Model = exports2.isMacroInstance = exports2.MacroInstance = exports2.isMacroAttributeStatement = exports2.MacroAttributeStatement = exports2.isMacroAssignStatement = exports2.MacroAssignStatement = exports2.isInterface = exports2.Interface = exports2.isInstanceLoop = exports2.InstanceLoop = exports2.isImportAlias = exports2.ImportAlias = exports2.isImport = exports2.Import = exports2.isImplicitlyTypedValue = exports2.ImplicitlyTypedValue = exports2.isIMacro = exports2.IMacro = exports2.isIInstance = exports2.IInstance = exports2.isIFunction = exports2.IFunction = exports2.isFunctionVariableSelectorExpr = exports2.FunctionVariableSelectorExpr = void 0;
     var langium_1 = require_lib2();
     exports2.AbstractElement = "AbstractElement";
     function isAbstractElement(item) {
@@ -40517,6 +40517,11 @@ var require_ast2 = __commonJS({
       return exports2.reflection.isInstance(item, exports2.FunctionVariable);
     }
     exports2.isFunctionVariable = isFunctionVariable;
+    exports2.FunctionVariableSelectorExpr = "FunctionVariableSelectorExpr";
+    function isFunctionVariableSelectorExpr(item) {
+      return exports2.reflection.isInstance(item, exports2.FunctionVariableSelectorExpr);
+    }
+    exports2.isFunctionVariableSelectorExpr = isFunctionVariableSelectorExpr;
     exports2.IFunction = "IFunction";
     function isIFunction(item) {
       return exports2.reflection.isInstance(item, exports2.IFunction);
@@ -40634,7 +40639,7 @@ var require_ast2 = __commonJS({
     exports2.isVariableValueExpr = isVariableValueExpr;
     var ModelModelingLanguageAstReflection = class extends langium_1.AbstractAstReflection {
       getAllTypes() {
-        return ["AbstractElement", "ArithExpr", "Attribute", "AttributeModifiers", "AttributeType", "BinaryExpression", "BoolExpr", "CReference", "Class", "Enum", "EnumEntry", "EnumValueExpr", "FunctionArgument", "FunctionAssignment", "FunctionCall", "FunctionLoop", "FunctionMacroCall", "FunctionReturn", "FunctionStatement", "FunctionVariable", "IFunction", "IInstance", "IMacro", "ImplicitlyTypedValue", "Import", "ImportAlias", "InstanceLoop", "InstanceStatement", "Interface", "MacroAssignStatement", "MacroAttributeStatement", "MacroInstance", "MacroStatement", "Model", "Multiplicity", "MultiplicitySpec", "NumberExpr", "OppositeAnnotation", "Package", "ReferenceModifiers", "Statement", "StringExpr", "TypedVariable", "UntypedVariable", "ValueExpr", "Variable", "VariableType", "VariableValueExpr"];
+        return ["AbstractElement", "ArithExpr", "Attribute", "AttributeModifiers", "AttributeType", "BinaryExpression", "BoolExpr", "CReference", "Class", "Enum", "EnumEntry", "EnumValueExpr", "FunctionArgument", "FunctionAssignment", "FunctionCall", "FunctionLoop", "FunctionMacroCall", "FunctionReturn", "FunctionStatement", "FunctionVariable", "FunctionVariableSelectorExpr", "IFunction", "IInstance", "IMacro", "ImplicitlyTypedValue", "Import", "ImportAlias", "InstanceLoop", "InstanceStatement", "Interface", "MacroAssignStatement", "MacroAttributeStatement", "MacroInstance", "MacroStatement", "Model", "Multiplicity", "MultiplicitySpec", "NumberExpr", "OppositeAnnotation", "Package", "ReferenceModifiers", "Statement", "StringExpr", "TypedVariable", "UntypedVariable", "ValueExpr", "Variable", "VariableType", "VariableValueExpr"];
       }
       computeIsSubtype(subtype, supertype) {
         switch (subtype) {
@@ -40644,6 +40649,7 @@ var require_ast2 = __commonJS({
           }
           case exports2.BinaryExpression:
           case exports2.EnumValueExpr:
+          case exports2.FunctionVariableSelectorExpr:
           case exports2.ValueExpr:
           case exports2.VariableValueExpr: {
             return this.isSubtype(exports2.ArithExpr, supertype);
@@ -40703,6 +40709,7 @@ var require_ast2 = __commonJS({
           }
           case "FunctionAssignment:select":
           case "FunctionReturn:var":
+          case "FunctionVariableSelectorExpr:val":
           case "InstanceLoop:var":
           case "MacroAssignStatement:instance":
           case "MacroInstance:iVar": {
@@ -41095,14 +41102,14 @@ var require_grammar3 = __commonJS({
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@62"
+                "$ref": "#/rules@63"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@61"
+                "$ref": "#/rules@62"
               },
               "arguments": []
             }
@@ -41126,7 +41133,7 @@ var require_grammar3 = __commonJS({
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@63"
+            "$ref": "#/rules@64"
           },
           "arguments": []
         }
@@ -41183,7 +41190,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@63"
+                "$ref": "#/rules@64"
               },
               "arguments": []
             }
@@ -41266,7 +41273,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -41285,7 +41292,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@65"
+                      "$ref": "#/rules@66"
                     },
                     "arguments": []
                   },
@@ -41305,7 +41312,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -41332,7 +41339,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@62"
+                "$ref": "#/rules@63"
               },
               "arguments": []
             }
@@ -41438,7 +41445,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -41608,7 +41615,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -41627,7 +41634,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@65"
+                      "$ref": "#/rules@66"
                     },
                     "arguments": []
                   },
@@ -41658,7 +41665,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@66"
+                          "$ref": "#/rules@67"
                         },
                         "arguments": []
                       },
@@ -41677,7 +41684,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@65"
+                          "$ref": "#/rules@66"
                         },
                         "arguments": []
                       },
@@ -41724,7 +41731,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -41743,7 +41750,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@65"
+                      "$ref": "#/rules@66"
                     },
                     "arguments": []
                   },
@@ -41774,7 +41781,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@66"
+                          "$ref": "#/rules@67"
                         },
                         "arguments": []
                       },
@@ -41793,7 +41800,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@65"
+                          "$ref": "#/rules@66"
                         },
                         "arguments": []
                       },
@@ -41840,7 +41847,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -41859,7 +41866,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@65"
+                      "$ref": "#/rules@66"
                     },
                     "arguments": []
                   },
@@ -41890,7 +41897,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@66"
+                          "$ref": "#/rules@67"
                         },
                         "arguments": []
                       },
@@ -41909,7 +41916,7 @@ var require_grammar3 = __commonJS({
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@65"
+                          "$ref": "#/rules@66"
                         },
                         "arguments": []
                       },
@@ -41954,7 +41961,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42013,7 +42020,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42187,7 +42194,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@65"
+                  "$ref": "#/rules@66"
                 },
                 "arguments": []
               },
@@ -42232,7 +42239,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42407,7 +42414,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@64"
+                  "$ref": "#/rules@65"
                 },
                 "arguments": []
               },
@@ -42461,7 +42468,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@65"
+                      "$ref": "#/rules@66"
                     },
                     "arguments": []
                   },
@@ -42480,7 +42487,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -42509,7 +42516,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42570,7 +42577,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42639,7 +42646,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42819,7 +42826,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@65"
+                  "$ref": "#/rules@66"
                 },
                 "arguments": []
               },
@@ -42893,7 +42900,7 @@ var require_grammar3 = __commonJS({
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@66"
+            "$ref": "#/rules@67"
           },
           "arguments": []
         }
@@ -42930,7 +42937,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42961,7 +42968,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -42992,7 +42999,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -43067,7 +43074,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -43153,7 +43160,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43203,7 +43210,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43226,7 +43233,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43259,7 +43266,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -43402,7 +43409,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43448,7 +43455,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43530,7 +43537,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43671,7 +43678,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -43737,7 +43744,7 @@ var require_grammar3 = __commonJS({
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@66"
+                      "$ref": "#/rules@67"
                     },
                     "arguments": []
                   },
@@ -43800,7 +43807,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@62"
+                "$ref": "#/rules@63"
               },
               "arguments": []
             }
@@ -43816,7 +43823,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@62"
+                "$ref": "#/rules@63"
               },
               "arguments": []
             }
@@ -43868,7 +43875,7 @@ var require_grammar3 = __commonJS({
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@66"
+                "$ref": "#/rules@67"
               },
               "arguments": []
             }
@@ -43973,7 +43980,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -43996,7 +44003,7 @@ var require_grammar3 = __commonJS({
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 },
                 "arguments": []
               },
@@ -44283,7 +44290,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@59"
+              "$ref": "#/rules@60"
             },
             "arguments": []
           },
@@ -44315,7 +44322,7 @@ var require_grammar3 = __commonJS({
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@59"
+                    "$ref": "#/rules@60"
                   },
                   "arguments": []
                 }
@@ -44347,7 +44354,36 @@ var require_grammar3 = __commonJS({
           "terminal": {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@64"
+              "$ref": "#/rules@65"
+            },
+            "arguments": []
+          },
+          "deprecatedSyntax": false
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "FunctionVariableSelectorExpr",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "val",
+        "operator": "=",
+        "terminal": {
+          "$type": "CrossReference",
+          "type": {
+            "$ref": "#/rules@33"
+          },
+          "terminal": {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@66"
             },
             "arguments": []
           },
@@ -44376,7 +44412,7 @@ var require_grammar3 = __commonJS({
           "terminal": {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@66"
+              "$ref": "#/rules@67"
             },
             "arguments": []
           },
@@ -44437,6 +44473,13 @@ var require_grammar3 = __commonJS({
           {
             "$type": "RuleCall",
             "rule": {
+              "$ref": "#/rules@59"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
               "$ref": "#/rules@58"
             },
             "arguments": []
@@ -44473,7 +44516,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "TerminalRuleCall",
             "rule": {
-              "$ref": "#/rules@62"
+              "$ref": "#/rules@63"
             }
           },
           {
@@ -44486,7 +44529,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "TerminalRuleCall",
             "rule": {
-              "$ref": "#/rules@62"
+              "$ref": "#/rules@63"
             }
           }
         ]
@@ -44535,7 +44578,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "TerminalRuleCall",
             "rule": {
-              "$ref": "#/rules@65"
+              "$ref": "#/rules@66"
             }
           },
           {
@@ -44548,7 +44591,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "TerminalRuleCall",
             "rule": {
-              "$ref": "#/rules@66"
+              "$ref": "#/rules@67"
             }
           }
         ]
@@ -44569,7 +44612,7 @@ var require_grammar3 = __commonJS({
           {
             "$type": "TerminalRuleCall",
             "rule": {
-              "$ref": "#/rules@66"
+              "$ref": "#/rules@67"
             }
           },
           {
@@ -44585,7 +44628,7 @@ var require_grammar3 = __commonJS({
               {
                 "$type": "TerminalRuleCall",
                 "rule": {
-                  "$ref": "#/rules@66"
+                  "$ref": "#/rules@67"
                 }
               }
             ],
@@ -44725,12 +44768,12 @@ var require_model_modeling_language_utils = __commonJS({
           if (rType == "BinaryExpression") {
             rType = this.getArithExprType(arith.right);
           }
-          if (lType == rType && lType != "BoolExpr" && lType != "EnumValueExpr" && lType != "VariableValueExpr") {
+          if (lType == rType && lType != "BoolExpr" && lType != "EnumValueExpr" && lType != "VariableValueExpr" && lType != "FunctionVariableSelectorExpr") {
             return lType;
           }
           return "StringExpr";
         }
-        if ((0, ast_1.isVariableValueExpr)(arith)) {
+        if ((0, ast_1.isVariableValueExpr)(arith) || (0, ast_1.isFunctionVariableSelectorExpr)(arith)) {
           if (arith.val.ref != void 0) {
             const varTyping = this.getVariableTyping(arith.val.ref);
             if (varTyping.dtype != void 0 && (varTyping.dtype == "double" || varTyping.dtype == "float" || varTyping.dtype == "int")) {
@@ -44768,6 +44811,9 @@ var require_model_modeling_language_utils = __commonJS({
       }
       static isEnumValueArithExpr(expr) {
         return (0, ast_1.isEnumValueExpr)(expr);
+      }
+      static isFunctionVariableSelectorArithExpr(expr) {
+        return (0, ast_1.isFunctionVariableSelectorExpr)(expr);
       }
       static getInstanceVariableType(instVar) {
         if (instVar.typing.type == void 0 && instVar.typing.dtype != void 0) {
@@ -44859,13 +44905,27 @@ var require_model_modeling_language_utils = __commonJS({
       }
       static getEnumType(node) {
         var _a;
-        const types = node.entries.map((entry) => this.getEnumValueExprType({ val: { ref: entry } }));
+        const types = [...new Set(node.entries.map((entry) => this.getEnumValueExprType({ val: { ref: entry } })))];
         if (types.length == 1) {
           return (_a = types.at(0)) !== null && _a !== void 0 ? _a : "enumval";
         } else if (types.length == 2 && (types.includes("int") && types.includes("double"))) {
           return "double";
         }
         return "enumval";
+      }
+      static getFunctionStatementDeepVariableNames(fs) {
+        if ((0, ast_1.isFunctionAssignment)(fs)) {
+          return [fs.var];
+        } else if ((0, ast_1.isFunctionLoop)(fs)) {
+          const fVars = [];
+          fVars.push(fs.var);
+          fs.statements.forEach((stmt) => {
+            fVars.push(...this.getFunctionStatementDeepVariableNames(stmt));
+          });
+          return fVars;
+        } else {
+          return [];
+        }
       }
     };
     exports2.ModelModelingLanguageUtils = ModelModelingLanguageUtils;
@@ -44958,6 +45018,9 @@ var require_model_modeling_language_validator = __commonJS({
         ],
         ArithExpr: [
           validator.checkArithExprOperations
+        ],
+        FunctionVariableSelectorExpr: [
+          validator.checkFunctionArgumentSelector
         ]
       };
       registry.register(checks, validator);
@@ -45009,6 +45072,7 @@ var require_model_modeling_language_validator = __commonJS({
       IssueCodes2.InstanceNameNotUnique = "instance-name-not-unique";
       IssueCodes2.InstanceLoopTypeMismatch = "instance-loop-type-mismatch";
       IssueCodes2.ArithExpressionUnsupportedOperation = "arith-expression-unsupported-operation";
+      IssueCodes2.InvalidTupleSelectorInParameter = "invalid-tuple-selector-in-parameter";
     })(IssueCodes = exports2.IssueCodes || (exports2.IssueCodes = {}));
     var ModelModelingLanguageValidator = class {
       constructor(services) {
@@ -45617,15 +45681,17 @@ var require_model_modeling_language_validator = __commonJS({
           reportedVars.add(param.name);
         });
         fct.statements.forEach((stmt) => {
-          if ((0, ast_1.isFunctionAssignment)(stmt) || (0, ast_1.isFunctionLoop)(stmt)) {
-            if (reportedVars.has(stmt.var.name)) {
-              accept("error", `Iterator has non-unique name '${stmt.var.name}'.`, {
-                node: stmt.var,
-                property: "name",
-                code: IssueCodes.FunctionVariableNameNotUnique
-              });
-            }
-            reportedVars.add(stmt.var.name);
+          if ((0, ast_1.isFunctionStatement)(stmt)) {
+            model_modeling_language_utils_1.ModelModelingLanguageUtils.getFunctionStatementDeepVariableNames(stmt).forEach((stmtVar) => {
+              if (reportedVars.has(stmtVar.name)) {
+                accept("error", `Iterator has non-unique name '${stmtVar.name}'.`, {
+                  node: stmtVar,
+                  property: "name",
+                  code: IssueCodes.FunctionVariableNameNotUnique
+                });
+              }
+              reportedVars.add(stmtVar.name);
+            });
           }
         });
       }
@@ -45684,6 +45750,15 @@ var require_model_modeling_language_validator = __commonJS({
                           code: IssueCodes.FunctionMacroCallArgumentTypeMismatch
                         });
                       }
+                    }
+                  } else if ((0, ast_1.isFunctionVariableSelectorExpr)(arg.value) && arg.value.val.ref != void 0) {
+                    if (macroParamVarTyping.type != model_modeling_language_utils_1.ModelModelingLanguageUtils.getVariableTyping(arg.value.val.ref).type) {
+                      accept("error", `Macro expects reference to ${macroParamVarTyping.type.$type.toLowerCase()} of type "${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(macroParamVarTyping.type, macroParamVarTyping.type.name)}"`, {
+                        node: fmc,
+                        property: "args",
+                        index: idx,
+                        code: IssueCodes.FunctionCallArgumentTypeMismatch
+                      });
                     }
                   } else {
                     accept("error", `Macro expects reference to ${macroParamVarTyping.type.$type.toLowerCase()} of type "${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(macroParamVarTyping.type, macroParamVarTyping.type.name)}"`, {
@@ -45790,6 +45865,15 @@ var require_model_modeling_language_validator = __commonJS({
                           code: IssueCodes.FunctionCallArgumentTypeMismatch
                         });
                       }
+                    }
+                  } else if ((0, ast_1.isFunctionVariableSelectorExpr)(arg.value) && arg.value.val.ref != void 0) {
+                    if (funcParamVarTyping.type != model_modeling_language_utils_1.ModelModelingLanguageUtils.getVariableTyping(arg.value.val.ref).type) {
+                      accept("error", `Function expects reference to ${funcParamVarTyping.type.$type.toLowerCase()} of type "${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(funcParamVarTyping.type, funcParamVarTyping.type.name)}"`, {
+                        node: fmc,
+                        property: "args",
+                        index: idx,
+                        code: IssueCodes.FunctionCallArgumentTypeMismatch
+                      });
                     }
                   } else {
                     accept("error", `Function expects reference to ${funcParamVarTyping.type.$type.toLowerCase()} of type "${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(funcParamVarTyping.type, funcParamVarTyping.type.name)}"`, {
@@ -45957,7 +46041,7 @@ var require_model_modeling_language_validator = __commonJS({
         });
       }
       checkInstanceLoops(instLoop, accept) {
-        if (instLoop.var.ref != void 0 && instLoop.var.ref.typing.dtype != void 0 && instLoop.var.ref.typing.type == void 0) {
+        if (instLoop.var.ref != void 0 && instLoop.var.ref.typing != void 0 && instLoop.var.ref.typing.dtype != void 0 && instLoop.var.ref.typing.type == void 0) {
           accept("error", `No class type - instance loops iterate over the elements of a reference of a class`, {
             node: instLoop,
             property: "var",
@@ -45988,6 +46072,19 @@ var require_model_modeling_language_validator = __commonJS({
                 code: IssueCodes.ArithExpressionUnsupportedOperation
               });
             }
+          }
+        }
+      }
+      checkFunctionArgumentSelector(fSelectorExpr, accept) {
+        var _a, _b;
+        console.log(`[FVARSELEXPRCHECK] ${(_a = fSelectorExpr.val.ref) === null || _a === void 0 ? void 0 : _a.name} |${(_b = fSelectorExpr.$cstNode) === null || _b === void 0 ? void 0 : _b.range.start.line}`);
+        if (fSelectorExpr.val != void 0) {
+          const matches = fSelectorExpr.val.$refText.match(/\./g);
+          if (matches != null && matches.length != 1) {
+            accept("error", `Invalid tuple selector`, {
+              node: fSelectorExpr,
+              code: IssueCodes.InvalidTupleSelectorInParameter
+            });
           }
         }
       }
@@ -46654,6 +46751,7 @@ var require_model_modeling_languge_scope_provider = __commonJS({
         this.services = services;
       }
       getScope(context) {
+        var _a;
         if ((0, ast_1.isMacroAttributeStatement)(context.container)) {
           const attr = context.container;
           const macroInst = attr.$container;
@@ -46843,20 +46941,14 @@ var require_model_modeling_languge_scope_provider = __commonJS({
             return result;
           }
         } else if ((0, ast_1.isEnumValueExpr)(context.container)) {
-          console.log(`[EVExp] isEnumValue | ${context.property}`);
           if (context.property === "val") {
-            console.log("[EVExp] isVal");
             const containerEnum = this._getEnumEntryValueType(context.container, context);
-            console.log(`[EVExp] > ${containerEnum == void 0 ? "undefined" : containerEnum.name}`);
             const scopes = [];
             if (containerEnum != void 0) {
-              console.log(`[EVExp] >> ${containerEnum.entries.map((e) => e.name).join(",")}`);
               scopes.push((0, langium_1.stream)(containerEnum.entries.map((v) => {
                 if (v != void 0) {
-                  console.log(`[EVExp] |> ${v.name}`);
                   const name = model_modeling_language_utils_1.ModelModelingLanguageUtils.getFullyQualifiedEnumEntryName(v, v.name);
                   if (name != void 0) {
-                    console.log(`[EVExp] |>|> ${name}`);
                     return this.descriptions.createDescription(v, name);
                   }
                 }
@@ -46869,8 +46961,37 @@ var require_model_modeling_languge_scope_provider = __commonJS({
             }
             return result;
           }
+        } else if ((0, ast_1.isFunctionVariableSelectorExpr)(context.container)) {
+          console.log(`[FSelExprEval] isFunctionArgument | ${context.property}`);
+          if (context.property === "val") {
+            console.log("[FSelExprEval] isSelectedRef");
+            const scopes = [];
+            const functionVarsInScope = this.getLocalInstanceVariablesInScope(context.container).filter((x) => (0, ast_1.isFunctionVariable)(x)).map((x) => x);
+            console.log(`[FSelExprEval] VarsInScope: ${functionVarsInScope.map((x) => x.name).join(", ")}`);
+            functionVarsInScope.forEach((fVar) => {
+              const availableSelectors = this.getAvailableFunctionVariablesSelectors(fVar);
+              if (availableSelectors != void 0) {
+                console.log(`[FSelExprEval] Selectors (-> ${fVar.name}): ${availableSelectors.map((x) => x.name).join(", ")}`);
+                scopes.push((0, langium_1.stream)(availableSelectors.map((selector) => {
+                  if (selector != void 0) {
+                    const name = fVar.name + "." + selector.name;
+                    if (name != void 0) {
+                      console.log(`[FSelExprEval] |>|> ${name}`);
+                      return this.descriptions.createDescription(selector, name);
+                    }
+                  }
+                  return void 0;
+                })).filter((d) => d != void 0));
+              }
+            });
+            let result = langium_1.EMPTY_SCOPE;
+            for (let i = scopes.length - 1; i >= 0; i--) {
+              result = this.createScope(scopes[i], result);
+            }
+            return result;
+          }
         }
-        console.log("[GetScope] Return super scope");
+        console.log(`[GetScope] Return super scope [Container: ${context.container.$type} (${(_a = context.container.$cstNode) === null || _a === void 0 ? void 0 : _a.range.start.line})]`);
         return super.getScope(context);
       }
       getGlobalScope(referenceType, _context) {
@@ -46903,6 +47024,27 @@ var require_model_modeling_languge_scope_provider = __commonJS({
         });
         return this.createScope(aliasDescriptions, globalScope);
       }
+      getAvailableFunctionVariablesSelectors(fvar) {
+        if ((0, ast_1.isFunctionAssignment)(fvar.$container)) {
+          const assignment = fvar.$container;
+          if ((0, ast_1.isFunctionMacroCall)(assignment.call)) {
+            const calledMacro = assignment.call;
+            if (calledMacro.macro.ref != void 0) {
+              const macro = calledMacro.macro.ref;
+              return macro.instances.map((x) => {
+                if (x.nInst != void 0 && x.iVar == void 0) {
+                  return x.nInst;
+                } else if (x.nInst == void 0 && x.iVar != void 0 && x.iVar.ref != void 0) {
+                  return x.iVar.ref;
+                } else {
+                  throw new Error("Invalid function call assignment");
+                }
+              });
+            }
+          }
+        }
+        return void 0;
+      }
       getAstNodeByPath(nodeDescription) {
         const targetDocUri = nodeDescription.documentUri;
         if (!this.services.shared.workspace.LangiumDocuments.hasDocument(targetDocUri)) {
@@ -46926,7 +47068,7 @@ var require_model_modeling_languge_scope_provider = __commonJS({
           } else {
             if ((0, ast_1.isFunctionLoop)(node)) {
               node.statements.forEach((statement, idx) => {
-                if (containerIdx == void 0 || containerIdx < idx) {
+                if (containerIdx == void 0 || idx < containerIdx) {
                   if ((0, ast_1.isFunctionAssignment)(statement)) {
                     scopedInstanceVariables.push(statement.var);
                   }
@@ -46935,7 +47077,7 @@ var require_model_modeling_languge_scope_provider = __commonJS({
               scopedInstanceVariables.push(node.var);
             } else if ((0, ast_1.isInstanceLoop)(node)) {
               node.statements.forEach((statement, idx) => {
-                if (containerIdx == void 0 || containerIdx < idx) {
+                if (containerIdx == void 0 || idx < containerIdx) {
                   if ((0, ast_1.isFunctionAssignment)(statement)) {
                     scopedInstanceVariables.push(statement.var);
                   }
@@ -47206,10 +47348,10 @@ var require_mml_reference_storage = __commonJS({
     exports2.MmlReferenceStorage = void 0;
     var langium_1 = require_lib2();
     var MmlReferenceStorage = class {
-      constructor(services) {
+      constructor(locator) {
         this.referenceMap = /* @__PURE__ */ new Map();
         this.nodeMap = /* @__PURE__ */ new Map();
-        this.astLocator = services.workspace.AstNodeLocator;
+        this._astLocator = locator;
       }
       storeReference(ref) {
         const node = ref.ref;
@@ -47225,7 +47367,7 @@ var require_mml_reference_storage = __commonJS({
       }
       getNodeReferenceId(node) {
         const doc = (0, langium_1.getDocument)(node);
-        const path = this.astLocator.getAstNodePath(node);
+        const path = this._astLocator.getAstNodePath(node);
         return doc.uri.path + node.$type + path;
       }
       resolveReference(ref) {
@@ -47240,6 +47382,25 @@ var require_mml_reference_storage = __commonJS({
           console.error("Undefined node!");
           return "$$ERROR$$";
         }
+      }
+      updateReferenceStorage(refStorage) {
+        if (this.referenceMap.size != refStorage.referenceMap.size) {
+          refStorage.referenceMap.forEach((value, key) => {
+            if (!this.referenceMap.has(key)) {
+              this.referenceMap.set(key, value);
+            }
+          });
+        }
+        if (this.nodeMap.size != refStorage.nodeMap.size) {
+          refStorage.nodeMap.forEach((value, key) => {
+            if (!this.nodeMap.has(key)) {
+              this.nodeMap.set(key, value);
+            }
+          });
+        }
+      }
+      get astLocator() {
+        return this._astLocator;
       }
     };
     exports2.MmlReferenceStorage = MmlReferenceStorage;
@@ -47258,8 +47419,28 @@ var require_mml_serializer_context = __commonJS({
       constructor() {
         this.variableMap = /* @__PURE__ */ new Map();
       }
-      storeValue(name, value) {
-        this.variableMap.set(name, value);
+      storeValue(variable, value) {
+        this.variableMap.set(variable, value);
+      }
+      unsetValue(variable) {
+        this.variableMap.delete(variable);
+      }
+      resolve(variable) {
+        return this.variableMap.get(variable);
+      }
+      clone() {
+        const newContext = new MmlSerializerContext();
+        this.variableMap.forEach((value, key) => {
+          newContext.storeValue(key, value);
+        });
+        return newContext;
+      }
+      enhance(other) {
+        other.variableMap.forEach((value, key) => {
+          if (!this.variableMap.has(key)) {
+            this.storeValue(key, value);
+          }
+        });
       }
       evaluateArithExpr(expr) {
         if ((0, ast_1.isBoolExpr)(expr)) {
@@ -47268,8 +47449,13 @@ var require_mml_serializer_context = __commonJS({
           return expr.value;
         } else if ((0, ast_1.isNumberExpr)(expr)) {
           return expr.value;
-        } else if ((0, ast_1.isVariableValueExpr)(expr)) {
-          return "VAR";
+        } else if ((0, ast_1.isVariableValueExpr)(expr) && expr.val.ref != void 0) {
+          return this.resolve(expr.val.ref);
+        } else if ((0, ast_1.isFunctionVariableSelectorExpr)(expr) && expr.val.ref != void 0) {
+          const resolver = this.findFunctionVariableSelectorBase(expr);
+          if (resolver != void 0) {
+            return resolver.resolve(expr.val.ref);
+          }
         } else if ((0, ast_1.isEnumValueExpr)(expr)) {
           const enumEntry = expr.val.ref;
           if (enumEntry != void 0) {
@@ -47320,6 +47506,15 @@ var require_mml_serializer_context = __commonJS({
         }
         return "$$UNKNOWN$$";
       }
+      findFunctionVariableSelectorBase(fExpr) {
+        const baseName = fExpr.val.$refText.split(".")[0];
+        for (let [key, value] of this.variableMap) {
+          if (key.name == baseName && value instanceof MmlSerializerContext) {
+            return value;
+          }
+        }
+        return void 0;
+      }
     };
     exports2.MmlSerializerContext = MmlSerializerContext;
   }
@@ -47353,7 +47548,11 @@ var require_mml_entity_templates = __commonJS({
           this.defaultValue = "";
         } else {
           this.hasDefaultValue = true;
-          this.defaultValue = new mml_serializer_context_1.MmlSerializerContext().evaluateArithExpr(attr.defaultValue);
+          if ((0, ast_1.isEnumValueExpr)(attr.defaultValue) && attr.defaultValue.val.ref != void 0) {
+            this.defaultValue = referenceStorage.getNodeReferenceId(attr.defaultValue.val.ref);
+          } else {
+            this.defaultValue = new mml_serializer_context_1.MmlSerializerContext().evaluateArithExpr(attr.defaultValue);
+          }
         }
         this.modifiers = new ClassElementModifiers(attr.modifiers);
       }
@@ -47501,6 +47700,904 @@ var require_mml_entity_templates = __commonJS({
   }
 });
 
+// out/language-server/generator/utils.js
+var require_utils2 = __commonJS({
+  "out/language-server/generator/utils.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.jsonReplacer = exports2.zip = void 0;
+    function zip(firstCollection, lastCollection) {
+      const length = Math.min(firstCollection.length, lastCollection.length);
+      const zipped = [];
+      for (let index = 0; index < length; index++) {
+        zipped.push([firstCollection[index], lastCollection[index]]);
+      }
+      return zipped;
+    }
+    exports2.zip = zip;
+    function jsonReplacer(key, value) {
+      if (value instanceof Map) {
+        return Array.from(value.values());
+      } else {
+        return value;
+      }
+    }
+    exports2.jsonReplacer = jsonReplacer;
+  }
+});
+
+// out/language-server/generator/mml-instance-templates.js
+var require_mml_instance_templates = __commonJS({
+  "out/language-server/generator/mml-instance-templates.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ObjectInstance = exports2.SerializedInstances = exports2.executeMacroCall = void 0;
+    var ast_1 = require_ast2();
+    var mml_serializer_context_1 = require_mml_serializer_context();
+    var utils_1 = require_utils2();
+    function executeMacroCall(macroCall, referenceStorage, outerContext, serializer, instanceRegistry) {
+      const innerContext = new mml_serializer_context_1.MmlSerializerContext();
+      if (macroCall.macro.ref != void 0) {
+        const macro = macroCall.macro.ref;
+        const zipped = (0, utils_1.zip)(macroCall.args, macro.parameter);
+        zipped.forEach((value) => {
+          if (value[0].value != void 0 && value[0].ref == void 0) {
+            innerContext.storeValue(value[1], outerContext.evaluateArithExpr(value[0].value));
+          } else if (value[0].value == void 0 && value[0].ref != void 0 && value[0].ref.ref != void 0) {
+            const passedVariable = value[0].ref.ref;
+            const resolved = outerContext.resolve(passedVariable);
+            innerContext.storeValue(value[1], resolved);
+          }
+        });
+        macro.instances.forEach((inst) => createInstance(inst, referenceStorage, innerContext, serializer, instanceRegistry));
+      }
+      return innerContext;
+    }
+    exports2.executeMacroCall = executeMacroCall;
+    var SerializedInstances = class {
+      constructor(model, referenceStorage, instanceRegistry) {
+        this.serializedInstances = [];
+        model.instances.forEach((inst) => this.serializedInstances.push(new SerializedInstance(inst, referenceStorage, instanceRegistry)));
+      }
+    };
+    exports2.SerializedInstances = SerializedInstances;
+    var SerializedInstance = class {
+      constructor(instance, referenceStorage, instanceRegistry) {
+        this.instances = [];
+        this.instanceName = instance.name;
+        const outerContext = new mml_serializer_context_1.MmlSerializerContext();
+        this.executeRecursively(instance.statements, referenceStorage, outerContext, instanceRegistry);
+      }
+      executeRecursively(stmts, referenceStorage, outerContext, instanceRegistry) {
+        stmts.forEach((iStmt) => {
+          var _a;
+          if ((0, ast_1.isInstanceStatement)(iStmt)) {
+            if ((0, ast_1.isFunctionAssignment)(iStmt) && (0, ast_1.isFunctionMacroCall)(iStmt.call)) {
+              const innerContext = executeMacroCall(iStmt.call, referenceStorage, outerContext, this, instanceRegistry);
+              if (iStmt.select != void 0 && iStmt.select.ref != void 0) {
+                outerContext.storeValue(iStmt.var, innerContext.resolve(iStmt.select.ref));
+              } else {
+                outerContext.storeValue(iStmt.var, innerContext);
+              }
+            }
+            if ((0, ast_1.isFunctionMacroCall)(iStmt)) {
+              executeMacroCall(iStmt, referenceStorage, outerContext, this, instanceRegistry);
+            }
+          } else if ((0, ast_1.isInstanceLoop)(iStmt) && iStmt.var.ref != void 0 && iStmt.ref.ref != void 0) {
+            const obj = outerContext.resolve(iStmt.var.ref);
+            const referencedIds = ((_a = obj.references.get(iStmt.ref.ref.name)) === null || _a === void 0 ? void 0 : _a.referencedIds) || [];
+            referencedIds.forEach((referencedId) => {
+              const referencedObj = instanceRegistry.resolve(referencedId);
+              if (referencedObj != void 0) {
+                const newContext = outerContext.clone();
+                newContext.storeValue(iStmt.ivar, referencedObj);
+                this.executeRecursively(iStmt.statements, referenceStorage, newContext, instanceRegistry);
+                newContext.unsetValue(iStmt.ivar);
+                outerContext.enhance(newContext);
+              }
+            });
+          }
+        });
+      }
+    };
+    function createInstance(initializer, referenceStorage, context, serializer, instanceRegistry) {
+      if (initializer.nInst != void 0 && initializer.iVar == void 0) {
+        context.storeValue(initializer.nInst, new ObjectInstance(initializer, referenceStorage, context, serializer, instanceRegistry));
+      } else if (initializer.nInst == void 0 && initializer.iVar != void 0 && initializer.iVar.ref != void 0) {
+        const objInstance = context.resolve(initializer.iVar.ref);
+        initializer.statements.forEach((stmt) => {
+          if ((0, ast_1.isMacroAssignStatement)(stmt)) {
+            objInstance.addReference(stmt, context, referenceStorage);
+          } else if ((0, ast_1.isMacroAttributeStatement)(stmt)) {
+            objInstance.addAttribute(stmt, context, referenceStorage);
+          }
+        });
+      }
+    }
+    var ObjectInstance = class {
+      constructor(initializer, referenceStorage, context, serializer, instanceRegistry) {
+        this.attributes = /* @__PURE__ */ new Map();
+        this.references = /* @__PURE__ */ new Map();
+        this.referenceId = instanceRegistry.getNewObjectId(this);
+        if (initializer.nInst != void 0 && initializer.nInst.typing.type != void 0) {
+          this.referenceTypeId = referenceStorage.resolveReference(initializer.nInst.typing.type);
+          this.name = initializer.nInst.name;
+        } else {
+          this.referenceTypeId = "$$UNKNOWN$$";
+          this.name = "$$UNKNOWN$$";
+        }
+        initializer.statements.forEach((stmt) => {
+          if ((0, ast_1.isMacroAssignStatement)(stmt)) {
+            this.addReference(stmt, context, referenceStorage);
+          } else if ((0, ast_1.isMacroAttributeStatement)(stmt)) {
+            this.addAttribute(stmt, context, referenceStorage);
+          }
+        });
+        serializer.instances.push(this);
+      }
+      addAttribute(attr, context, referenceStorage) {
+        if (attr.attr.ref != void 0) {
+          var val;
+          var isEnumType = false;
+          if ((0, ast_1.isEnumValueExpr)(attr.value) && attr.value.val.ref != void 0) {
+            val = referenceStorage.getNodeReferenceId(attr.value.val.ref);
+            isEnumType = true;
+          } else {
+            val = context.evaluateArithExpr(attr.value);
+          }
+          this.attributes.set(attr.attr.ref.name, {
+            name: attr.attr.ref.name,
+            typeId: referenceStorage.resolveReference(attr.attr),
+            isEnumType,
+            value: val
+          });
+        }
+      }
+      addReference(ref, context, referenceStorage) {
+        var _a;
+        if (ref.cref.ref != void 0 && ref.instance.ref != void 0) {
+          if (this.references.has(ref.cref.ref.name)) {
+            (_a = this.references.get(ref.cref.ref.name)) === null || _a === void 0 ? void 0 : _a.referencedIds.push(context.resolve(ref.instance.ref).referenceId);
+          } else {
+            this.references.set(ref.cref.ref.name, {
+              name: ref.cref.ref.name,
+              typeId: referenceStorage.resolveReference(ref.cref),
+              referencedIds: [context.resolve(ref.instance.ref).referenceId]
+            });
+          }
+        }
+      }
+    };
+    exports2.ObjectInstance = ObjectInstance;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/rng.js
+var require_rng = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/rng.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = rng;
+    var getRandomValues;
+    var rnds8 = new Uint8Array(16);
+    function rng() {
+      if (!getRandomValues) {
+        getRandomValues = typeof crypto !== "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
+        if (!getRandomValues) {
+          throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
+        }
+      }
+      return getRandomValues(rnds8);
+    }
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/regex.js
+var require_regex = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/regex.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/validate.js
+var require_validate = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/validate.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _regex = _interopRequireDefault(require_regex());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    function validate(uuid) {
+      return typeof uuid === "string" && _regex.default.test(uuid);
+    }
+    var _default = validate;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/stringify.js
+var require_stringify = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/stringify.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    exports2.unsafeStringify = unsafeStringify;
+    var _validate = _interopRequireDefault(require_validate());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    var byteToHex = [];
+    for (let i = 0; i < 256; ++i) {
+      byteToHex.push((i + 256).toString(16).slice(1));
+    }
+    function unsafeStringify(arr, offset = 0) {
+      return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+    }
+    function stringify(arr, offset = 0) {
+      const uuid = unsafeStringify(arr, offset);
+      if (!(0, _validate.default)(uuid)) {
+        throw TypeError("Stringified UUID is invalid");
+      }
+      return uuid;
+    }
+    var _default = stringify;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/v1.js
+var require_v1 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/v1.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _rng = _interopRequireDefault(require_rng());
+    var _stringify = require_stringify();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    var _nodeId;
+    var _clockseq;
+    var _lastMSecs = 0;
+    var _lastNSecs = 0;
+    function v1(options, buf, offset) {
+      let i = buf && offset || 0;
+      const b = buf || new Array(16);
+      options = options || {};
+      let node = options.node || _nodeId;
+      let clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
+      if (node == null || clockseq == null) {
+        const seedBytes = options.random || (options.rng || _rng.default)();
+        if (node == null) {
+          node = _nodeId = [seedBytes[0] | 1, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+        }
+        if (clockseq == null) {
+          clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
+        }
+      }
+      let msecs = options.msecs !== void 0 ? options.msecs : Date.now();
+      let nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
+      const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
+      if (dt < 0 && options.clockseq === void 0) {
+        clockseq = clockseq + 1 & 16383;
+      }
+      if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
+        nsecs = 0;
+      }
+      if (nsecs >= 1e4) {
+        throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+      }
+      _lastMSecs = msecs;
+      _lastNSecs = nsecs;
+      _clockseq = clockseq;
+      msecs += 122192928e5;
+      const tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
+      b[i++] = tl >>> 24 & 255;
+      b[i++] = tl >>> 16 & 255;
+      b[i++] = tl >>> 8 & 255;
+      b[i++] = tl & 255;
+      const tmh = msecs / 4294967296 * 1e4 & 268435455;
+      b[i++] = tmh >>> 8 & 255;
+      b[i++] = tmh & 255;
+      b[i++] = tmh >>> 24 & 15 | 16;
+      b[i++] = tmh >>> 16 & 255;
+      b[i++] = clockseq >>> 8 | 128;
+      b[i++] = clockseq & 255;
+      for (let n = 0; n < 6; ++n) {
+        b[i + n] = node[n];
+      }
+      return buf || (0, _stringify.unsafeStringify)(b);
+    }
+    var _default = v1;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/parse.js
+var require_parse = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/parse.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _validate = _interopRequireDefault(require_validate());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    function parse(uuid) {
+      if (!(0, _validate.default)(uuid)) {
+        throw TypeError("Invalid UUID");
+      }
+      let v;
+      const arr = new Uint8Array(16);
+      arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
+      arr[1] = v >>> 16 & 255;
+      arr[2] = v >>> 8 & 255;
+      arr[3] = v & 255;
+      arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
+      arr[5] = v & 255;
+      arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
+      arr[7] = v & 255;
+      arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
+      arr[9] = v & 255;
+      arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 1099511627776 & 255;
+      arr[11] = v / 4294967296 & 255;
+      arr[12] = v >>> 24 & 255;
+      arr[13] = v >>> 16 & 255;
+      arr[14] = v >>> 8 & 255;
+      arr[15] = v & 255;
+      return arr;
+    }
+    var _default = parse;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/v35.js
+var require_v35 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/v35.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.URL = exports2.DNS = void 0;
+    exports2.default = v35;
+    var _stringify = require_stringify();
+    var _parse = _interopRequireDefault(require_parse());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    function stringToBytes(str) {
+      str = unescape(encodeURIComponent(str));
+      const bytes = [];
+      for (let i = 0; i < str.length; ++i) {
+        bytes.push(str.charCodeAt(i));
+      }
+      return bytes;
+    }
+    var DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+    exports2.DNS = DNS;
+    var URL = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
+    exports2.URL = URL;
+    function v35(name, version, hashfunc) {
+      function generateUUID(value, namespace, buf, offset) {
+        var _namespace;
+        if (typeof value === "string") {
+          value = stringToBytes(value);
+        }
+        if (typeof namespace === "string") {
+          namespace = (0, _parse.default)(namespace);
+        }
+        if (((_namespace = namespace) === null || _namespace === void 0 ? void 0 : _namespace.length) !== 16) {
+          throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
+        }
+        let bytes = new Uint8Array(16 + value.length);
+        bytes.set(namespace);
+        bytes.set(value, namespace.length);
+        bytes = hashfunc(bytes);
+        bytes[6] = bytes[6] & 15 | version;
+        bytes[8] = bytes[8] & 63 | 128;
+        if (buf) {
+          offset = offset || 0;
+          for (let i = 0; i < 16; ++i) {
+            buf[offset + i] = bytes[i];
+          }
+          return buf;
+        }
+        return (0, _stringify.unsafeStringify)(bytes);
+      }
+      try {
+        generateUUID.name = name;
+      } catch (err) {
+      }
+      generateUUID.DNS = DNS;
+      generateUUID.URL = URL;
+      return generateUUID;
+    }
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/md5.js
+var require_md5 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/md5.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    function md5(bytes) {
+      if (typeof bytes === "string") {
+        const msg = unescape(encodeURIComponent(bytes));
+        bytes = new Uint8Array(msg.length);
+        for (let i = 0; i < msg.length; ++i) {
+          bytes[i] = msg.charCodeAt(i);
+        }
+      }
+      return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
+    }
+    function md5ToHexEncodedArray(input) {
+      const output = [];
+      const length32 = input.length * 32;
+      const hexTab = "0123456789abcdef";
+      for (let i = 0; i < length32; i += 8) {
+        const x = input[i >> 5] >>> i % 32 & 255;
+        const hex = parseInt(hexTab.charAt(x >>> 4 & 15) + hexTab.charAt(x & 15), 16);
+        output.push(hex);
+      }
+      return output;
+    }
+    function getOutputLength(inputLength8) {
+      return (inputLength8 + 64 >>> 9 << 4) + 14 + 1;
+    }
+    function wordsToMd5(x, len) {
+      x[len >> 5] |= 128 << len % 32;
+      x[getOutputLength(len) - 1] = len;
+      let a = 1732584193;
+      let b = -271733879;
+      let c = -1732584194;
+      let d = 271733878;
+      for (let i = 0; i < x.length; i += 16) {
+        const olda = a;
+        const oldb = b;
+        const oldc = c;
+        const oldd = d;
+        a = md5ff(a, b, c, d, x[i], 7, -680876936);
+        d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
+        c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
+        b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
+        a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
+        d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
+        c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
+        b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
+        a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
+        d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
+        c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
+        b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
+        a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
+        d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
+        c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
+        b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
+        a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
+        d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
+        c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
+        b = md5gg(b, c, d, a, x[i], 20, -373897302);
+        a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
+        d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
+        c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
+        b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
+        a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
+        d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
+        c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
+        b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
+        a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
+        d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
+        c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
+        b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
+        a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
+        d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
+        c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
+        b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
+        a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
+        d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
+        c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
+        b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
+        a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
+        d = md5hh(d, a, b, c, x[i], 11, -358537222);
+        c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
+        b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
+        a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
+        d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
+        c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
+        b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
+        a = md5ii(a, b, c, d, x[i], 6, -198630844);
+        d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
+        c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
+        b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
+        a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
+        d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
+        c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
+        b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
+        a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
+        d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
+        c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
+        b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
+        a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
+        d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
+        c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
+        b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
+        a = safeAdd(a, olda);
+        b = safeAdd(b, oldb);
+        c = safeAdd(c, oldc);
+        d = safeAdd(d, oldd);
+      }
+      return [a, b, c, d];
+    }
+    function bytesToWords(input) {
+      if (input.length === 0) {
+        return [];
+      }
+      const length8 = input.length * 8;
+      const output = new Uint32Array(getOutputLength(length8));
+      for (let i = 0; i < length8; i += 8) {
+        output[i >> 5] |= (input[i / 8] & 255) << i % 32;
+      }
+      return output;
+    }
+    function safeAdd(x, y) {
+      const lsw = (x & 65535) + (y & 65535);
+      const msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+      return msw << 16 | lsw & 65535;
+    }
+    function bitRotateLeft(num, cnt) {
+      return num << cnt | num >>> 32 - cnt;
+    }
+    function md5cmn(q, a, b, x, s, t) {
+      return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
+    }
+    function md5ff(a, b, c, d, x, s, t) {
+      return md5cmn(b & c | ~b & d, a, b, x, s, t);
+    }
+    function md5gg(a, b, c, d, x, s, t) {
+      return md5cmn(b & d | c & ~d, a, b, x, s, t);
+    }
+    function md5hh(a, b, c, d, x, s, t) {
+      return md5cmn(b ^ c ^ d, a, b, x, s, t);
+    }
+    function md5ii(a, b, c, d, x, s, t) {
+      return md5cmn(c ^ (b | ~d), a, b, x, s, t);
+    }
+    var _default = md5;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/v3.js
+var require_v3 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/v3.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _v = _interopRequireDefault(require_v35());
+    var _md = _interopRequireDefault(require_md5());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    var v3 = (0, _v.default)("v3", 48, _md.default);
+    var _default = v3;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/native.js
+var require_native = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/native.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+    var _default = {
+      randomUUID
+    };
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/v4.js
+var require_v4 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/v4.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _native = _interopRequireDefault(require_native());
+    var _rng = _interopRequireDefault(require_rng());
+    var _stringify = require_stringify();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    function v4(options, buf, offset) {
+      if (_native.default.randomUUID && !buf && !options) {
+        return _native.default.randomUUID();
+      }
+      options = options || {};
+      const rnds = options.random || (options.rng || _rng.default)();
+      rnds[6] = rnds[6] & 15 | 64;
+      rnds[8] = rnds[8] & 63 | 128;
+      if (buf) {
+        offset = offset || 0;
+        for (let i = 0; i < 16; ++i) {
+          buf[offset + i] = rnds[i];
+        }
+        return buf;
+      }
+      return (0, _stringify.unsafeStringify)(rnds);
+    }
+    var _default = v4;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/sha1.js
+var require_sha1 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/sha1.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    function f(s, x, y, z) {
+      switch (s) {
+        case 0:
+          return x & y ^ ~x & z;
+        case 1:
+          return x ^ y ^ z;
+        case 2:
+          return x & y ^ x & z ^ y & z;
+        case 3:
+          return x ^ y ^ z;
+      }
+    }
+    function ROTL(x, n) {
+      return x << n | x >>> 32 - n;
+    }
+    function sha1(bytes) {
+      const K = [1518500249, 1859775393, 2400959708, 3395469782];
+      const H = [1732584193, 4023233417, 2562383102, 271733878, 3285377520];
+      if (typeof bytes === "string") {
+        const msg = unescape(encodeURIComponent(bytes));
+        bytes = [];
+        for (let i = 0; i < msg.length; ++i) {
+          bytes.push(msg.charCodeAt(i));
+        }
+      } else if (!Array.isArray(bytes)) {
+        bytes = Array.prototype.slice.call(bytes);
+      }
+      bytes.push(128);
+      const l = bytes.length / 4 + 2;
+      const N = Math.ceil(l / 16);
+      const M = new Array(N);
+      for (let i = 0; i < N; ++i) {
+        const arr = new Uint32Array(16);
+        for (let j = 0; j < 16; ++j) {
+          arr[j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
+        }
+        M[i] = arr;
+      }
+      M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
+      M[N - 1][14] = Math.floor(M[N - 1][14]);
+      M[N - 1][15] = (bytes.length - 1) * 8 & 4294967295;
+      for (let i = 0; i < N; ++i) {
+        const W = new Uint32Array(80);
+        for (let t = 0; t < 16; ++t) {
+          W[t] = M[i][t];
+        }
+        for (let t = 16; t < 80; ++t) {
+          W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
+        }
+        let a = H[0];
+        let b = H[1];
+        let c = H[2];
+        let d = H[3];
+        let e = H[4];
+        for (let t = 0; t < 80; ++t) {
+          const s = Math.floor(t / 20);
+          const T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
+          e = d;
+          d = c;
+          c = ROTL(b, 30) >>> 0;
+          b = a;
+          a = T;
+        }
+        H[0] = H[0] + a >>> 0;
+        H[1] = H[1] + b >>> 0;
+        H[2] = H[2] + c >>> 0;
+        H[3] = H[3] + d >>> 0;
+        H[4] = H[4] + e >>> 0;
+      }
+      return [H[0] >> 24 & 255, H[0] >> 16 & 255, H[0] >> 8 & 255, H[0] & 255, H[1] >> 24 & 255, H[1] >> 16 & 255, H[1] >> 8 & 255, H[1] & 255, H[2] >> 24 & 255, H[2] >> 16 & 255, H[2] >> 8 & 255, H[2] & 255, H[3] >> 24 & 255, H[3] >> 16 & 255, H[3] >> 8 & 255, H[3] & 255, H[4] >> 24 & 255, H[4] >> 16 & 255, H[4] >> 8 & 255, H[4] & 255];
+    }
+    var _default = sha1;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/v5.js
+var require_v5 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/v5.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _v = _interopRequireDefault(require_v35());
+    var _sha = _interopRequireDefault(require_sha1());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    var v5 = (0, _v.default)("v5", 80, _sha.default);
+    var _default = v5;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/nil.js
+var require_nil = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/nil.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _default = "00000000-0000-0000-0000-000000000000";
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/version.js
+var require_version2 = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/version.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.default = void 0;
+    var _validate = _interopRequireDefault(require_validate());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+    function version(uuid) {
+      if (!(0, _validate.default)(uuid)) {
+        throw TypeError("Invalid UUID");
+      }
+      return parseInt(uuid.slice(14, 15), 16);
+    }
+    var _default = version;
+    exports2.default = _default;
+  }
+});
+
+// node_modules/uuid/dist/commonjs-browser/index.js
+var require_commonjs_browser = __commonJS({
+  "node_modules/uuid/dist/commonjs-browser/index.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    Object.defineProperty(exports2, "NIL", {
+      enumerable: true,
+      get: function get() {
+        return _nil.default;
+      }
+    });
+    Object.defineProperty(exports2, "parse", {
+      enumerable: true,
+      get: function get() {
+        return _parse.default;
+      }
+    });
+    Object.defineProperty(exports2, "stringify", {
+      enumerable: true,
+      get: function get() {
+        return _stringify.default;
+      }
+    });
+    Object.defineProperty(exports2, "v1", {
+      enumerable: true,
+      get: function get() {
+        return _v.default;
+      }
+    });
+    Object.defineProperty(exports2, "v3", {
+      enumerable: true,
+      get: function get() {
+        return _v2.default;
+      }
+    });
+    Object.defineProperty(exports2, "v4", {
+      enumerable: true,
+      get: function get() {
+        return _v3.default;
+      }
+    });
+    Object.defineProperty(exports2, "v5", {
+      enumerable: true,
+      get: function get() {
+        return _v4.default;
+      }
+    });
+    Object.defineProperty(exports2, "validate", {
+      enumerable: true,
+      get: function get() {
+        return _validate.default;
+      }
+    });
+    Object.defineProperty(exports2, "version", {
+      enumerable: true,
+      get: function get() {
+        return _version.default;
+      }
+    });
+    var _v = _interopRequireDefault(require_v1());
+    var _v2 = _interopRequireDefault(require_v3());
+    var _v3 = _interopRequireDefault(require_v4());
+    var _v4 = _interopRequireDefault(require_v5());
+    var _nil = _interopRequireDefault(require_nil());
+    var _version = _interopRequireDefault(require_version2());
+    var _validate = _interopRequireDefault(require_validate());
+    var _stringify = _interopRequireDefault(require_stringify());
+    var _parse = _interopRequireDefault(require_parse());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { default: obj };
+    }
+  }
+});
+
+// out/language-server/generator/mml-instance-registry.js
+var require_mml_instance_registry = __commonJS({
+  "out/language-server/generator/mml-instance-registry.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MmlInstanceRegistry = void 0;
+    var uuid_1 = require_commonjs_browser();
+    var MmlInstanceRegistry = class {
+      constructor() {
+        this.knownInstances = /* @__PURE__ */ new Map();
+      }
+      getNewObjectId(obj) {
+        const newId = (0, uuid_1.v4)();
+        this.knownInstances.set(newId, obj);
+        return newId;
+      }
+      resolve(objId) {
+        return this.knownInstances.get(objId);
+      }
+    };
+    exports2.MmlInstanceRegistry = MmlInstanceRegistry;
+  }
+});
+
 // out/language-server/generator/mml-serializer.js
 var require_mml_serializer = __commonJS({
   "out/language-server/generator/mml-serializer.js"(exports2) {
@@ -47509,10 +48606,15 @@ var require_mml_serializer = __commonJS({
     exports2.serializeModel = void 0;
     var mml_reference_storage_1 = require_mml_reference_storage();
     var mml_entity_templates_1 = require_mml_entity_templates();
+    var mml_instance_templates_1 = require_mml_instance_templates();
+    var mml_instance_registry_1 = require_mml_instance_registry();
+    var utils_1 = require_utils2();
     function serializeModel(model, services) {
-      const referenceStorage = new mml_reference_storage_1.MmlReferenceStorage(services);
+      const referenceStorage = new mml_reference_storage_1.MmlReferenceStorage(services.workspace.AstNodeLocator);
+      const instanceRegistry = new mml_instance_registry_1.MmlInstanceRegistry();
       const serializedModel = new mml_entity_templates_1.SerializedModel(model, referenceStorage);
-      return JSON.stringify(serializedModel);
+      const serializedInstances = new mml_instance_templates_1.SerializedInstances(model, referenceStorage, instanceRegistry);
+      return JSON.stringify({ typegraph: serializedModel, instancegraph: serializedInstances }, utils_1.jsonReplacer);
     }
     exports2.serializeModel = serializeModel;
   }

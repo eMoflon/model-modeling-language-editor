@@ -39,16 +39,16 @@ public class EcoreTypeGraphBuilder {
 	private final EPackage ePackage;
 	private final String exportPath;
 	private final EcoreTypeResolver resolver;
-	
+
 	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, String exportPath, EcoreTypeResolver resolver) {
 		this.ePackage = createPackage(pckg.getName(), pckg.getName(), targetUri);
 		this.exportPath = exportPath;
 		this.resolver = resolver;
-		
+
 		resolver.store(pckg.getReferenceId(), this.ePackage);
-		
+
 		pckg.getSubPackages().forEach(subPckg -> {
-			EPackage subPackage = new EcoreTypeGraphBuilder(subPckg, targetUri,resolver).getAsSubpackage();
+			EPackage subPackage = new EcoreTypeGraphBuilder(subPckg, targetUri, resolver).getAsSubpackage();
 			this.ePackage.getESubpackages().add(subPackage);
 		});
 		pckg.getAbstractClasses().forEach(ab -> {
@@ -61,14 +61,14 @@ public class EcoreTypeGraphBuilder {
 			enm.getEntries().forEach(ee -> addEEnumLiteral(enmm,(EnumEntryEntity<?>) ee));
 		});
 	}
-	
+
 	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, EcoreTypeResolver resolver) {
-		this(pckg,targetUri, null, resolver);
+		this(pckg, targetUri, null, resolver);
 	}
 	
 	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList, EcoreTypeResolver resolver) {
 		resolver.resolveUnresovedTypes();
-		
+
 		for (EcoreTypeGraphBuilder builder : graphBuilderList) {
 			builder.ePackage.eClass();
 		}
@@ -82,7 +82,8 @@ public class EcoreTypeGraphBuilder {
 		// create a resource
 		try {
 			for (EcoreTypeGraphBuilder builder : graphBuilderList) {
-				Resource resource = resSet.createResource(URI.createFileURI(Objects.requireNonNull(builder.exportPath)));
+				Resource resource = resSet
+						.createResource(URI.createFileURI(Objects.requireNonNull(builder.exportPath)));
 				/*
 				 * add your EPackage as root, everything is hierarchical included in this first
 				 * node
@@ -100,10 +101,10 @@ public class EcoreTypeGraphBuilder {
 				resource.save(Collections.EMPTY_MAP);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}	
+			}
 		}
-	}	
-	
+	}
+
 	public EPackage getAsSubpackage() {
 		return this.ePackage;
 	}
@@ -118,7 +119,7 @@ public class EcoreTypeGraphBuilder {
 		attribute.setID(isId);
 		attribute.setLowerBound(0);
 		attribute.setUpperBound(1);
-		
+
 		if (attr.isEnumType()) {
 			resolver.resolveAttributeEnum(attribute, (AttributeEntity<String>) attr);
 		}else {
@@ -128,7 +129,7 @@ public class EcoreTypeGraphBuilder {
 				attribute.setDefaultValue(attr.getDefaultValue());
 			}
 		}
-		
+
 		attribute.setOrdered(attr.getModifiers().isOrdered());
 		attribute.setTransient(attr.getModifiers().isTransient());
 		attribute.setUnique(attr.getModifiers().isUnique());
@@ -145,25 +146,25 @@ public class EcoreTypeGraphBuilder {
 		reference.setName(cref.getName());
 
 		resolver.resolveReference(reference, cref);
-		
+
 		if (cref.getMultiplicity().isLowerIsN0()) {
-			reference.setLowerBound(0);	
-		}else if (cref.getMultiplicity().isLowerIsN()) {
+			reference.setLowerBound(0);
+		} else if (cref.getMultiplicity().isLowerIsN()) {
 			reference.setLowerBound(1);
-		}else {
+		} else {
 			reference.setLowerBound(cref.getMultiplicity().getLower());
 		}
-		
+
 		if (cref.getMultiplicity().isHasUpperBound()) {
 			if (cref.getMultiplicity().isUpperIsN0()) {
-				reference.setUpperBound(0);	
-			}else if (cref.getMultiplicity().isUpperIsN()) {
+				reference.setUpperBound(0);
+			} else if (cref.getMultiplicity().isUpperIsN()) {
 				reference.setUpperBound(1);
-			}else {
+			} else {
 				reference.setUpperBound(cref.getMultiplicity().getUpper());
 			}
 		}
-		
+
 		reference.setChangeable(!cref.getModifiers().isReadonly());
 		reference.setVolatile(cref.getModifiers().isVolatile());
 		reference.setUnsettable(cref.getModifiers().isUnsettable());
@@ -191,7 +192,7 @@ public class EcoreTypeGraphBuilder {
 		this.ePackage.getEClassifiers().add(eClass);
 		return eClass;
 	}
-	
+
 	private EEnum createEEnum(final EnumEntity<?> ee) {
 		final EEnum eenum = EcoreFactory.eINSTANCE.createEEnum();
 		resolver.store(ee.getReferenceId(), eenum);

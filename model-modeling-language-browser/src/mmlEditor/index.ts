@@ -163,21 +163,25 @@ export function openModel(modelPath: string): boolean {
     return false;
 }
 
+interface GraphResult {
+    generator: { uri: string, gen: string }[];
+    diagnostic: { uri: string, err: number }[];
+}
+
 export function getCombinedGeneratorResult(): string {
     if (workspacePath == undefined) {
         return "{}";
     }
+
     console.log(generatorStorage.size);
     const generatorResult: { uri: string, gen: string }[] = [];
     const diagnosticResult: { uri: string, err: number }[] = [];
     generatorStorage.forEach((val, key) => generatorResult.push({uri: key, gen: val}));
     diagnosticStorage.forEach((val, key) => diagnosticResult.push({uri: key, err: val}));
-    const combinedResult: {
-        generator: { uri: string, gen: string }[],
-        diagnostic: { uri: string, err: number }[]
-    } = {generator: generatorResult, diagnostic: diagnosticResult};
-    console.warn(JSON.stringify(combinedResult));
-    return JSON.stringify(combinedResult);
+
+    const graphResult: GraphResult = {generator: generatorResult, diagnostic: diagnosticResult};
+    console.warn(JSON.stringify(graphResult));
+    return JSON.stringify(graphResult);
 }
 
 export function exportWorkspace() {

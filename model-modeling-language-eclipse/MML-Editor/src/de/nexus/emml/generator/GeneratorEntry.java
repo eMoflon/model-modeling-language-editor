@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.nexus.emml.generator.entities.ModelEntity;
+import de.nexus.emml.generator.entities.model.ModelEntity;
 
 public class GeneratorEntry {
 	private URI uri;

@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -8,7 +8,7 @@ public class AbstractClassEntity {
 	private String name;
 	private boolean isAbstract;
 	private boolean isInterface;
-	private ArrayList<AttributeEntity> attributes;
+	private ArrayList<AttributeEntity<?>> attributes;
 	private ArrayList<CReferenceEntity> references;
 	private ArrayList<String> extendsIds;
 	private ArrayList<String> implementsIds;
@@ -29,7 +29,7 @@ public class AbstractClassEntity {
 		return isInterface;
 	}
 
-	public ArrayList<AttributeEntity> getAttributes() {
+	public ArrayList<AttributeEntity<?>> getAttributes() {
 		return attributes;
 	}
 

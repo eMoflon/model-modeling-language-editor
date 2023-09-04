@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -9,7 +9,7 @@ public class PackageEntity {
 	private ArrayList<AbstractClassEntity> abstractClasses;
 	private ArrayList<EnumEntity<?>> enums;
 	private ArrayList<PackageEntity> subPackages;
-	
+
 	public String getReferenceId() {
 		return referenceId;
 	}

@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 public class MultiplicityEntity {
 	private boolean hasUpperBound;

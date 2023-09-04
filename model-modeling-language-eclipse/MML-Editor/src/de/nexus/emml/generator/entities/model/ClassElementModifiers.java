@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 import com.google.gson.annotations.SerializedName;
 

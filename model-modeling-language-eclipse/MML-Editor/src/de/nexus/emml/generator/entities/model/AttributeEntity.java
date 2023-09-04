@@ -1,4 +1,4 @@
-package de.nexus.emml.generator.entities;
+package de.nexus.emml.generator.entities.model;
 
 public class AttributeEntity<T> {
 	private String referenceId;
@@ -8,7 +8,7 @@ public class AttributeEntity<T> {
 	private boolean hasDefaultValue;
 	private T defaultValue;
 	private ClassElementModifiers modifiers;
-	
+
 	public String getReferenceId() {
 		return referenceId;
 	}

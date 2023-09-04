@@ -28,6 +28,12 @@ import de.nexus.emml.generator.entities.CReferenceEntity;
 import de.nexus.emml.generator.entities.EnumEntity;
 import de.nexus.emml.generator.entities.EnumEntryEntity;
 import de.nexus.emml.generator.entities.PackageEntity;
+import de.nexus.emml.generator.entities.model.AbstractClassEntity;
+import de.nexus.emml.generator.entities.model.AttributeEntity;
+import de.nexus.emml.generator.entities.model.CReferenceEntity;
+import de.nexus.emml.generator.entities.model.EnumEntity;
+import de.nexus.emml.generator.entities.model.EnumEntryEntity;
+import de.nexus.emml.generator.entities.model.PackageEntity;
 
 public class EcoreTypeGraphBuilder {
 	private final EPackage ePackage;

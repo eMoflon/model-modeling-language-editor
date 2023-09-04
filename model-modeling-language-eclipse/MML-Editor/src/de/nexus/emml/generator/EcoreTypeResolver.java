@@ -12,6 +12,8 @@ import org.eclipse.emf.ecore.EReference;
 
 import de.nexus.emml.generator.entities.AttributeEntity;
 import de.nexus.emml.generator.entities.CReferenceEntity;
+import de.nexus.emml.generator.entities.model.AttributeEntity;
+import de.nexus.emml.generator.entities.model.CReferenceEntity;
 
 public class EcoreTypeResolver {
 	private final Map<String, EClassifier> classifiers = new HashMap<String, EClassifier>();

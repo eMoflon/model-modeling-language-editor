@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
@@ -19,15 +19,8 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
-import de.nexus.emml.generator.entities.AbstractClassEntity;
-import de.nexus.emml.generator.entities.AttributeEntity;
-import de.nexus.emml.generator.entities.CReferenceEntity;
-import de.nexus.emml.generator.entities.EnumEntity;
-import de.nexus.emml.generator.entities.EnumEntryEntity;
-import de.nexus.emml.generator.entities.PackageEntity;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
+import de.nexus.emml.EditorActivator;
 import de.nexus.emml.generator.entities.model.AbstractClassEntity;
 import de.nexus.emml.generator.entities.model.AttributeEntity;
 import de.nexus.emml.generator.entities.model.CReferenceEntity;
@@ -58,15 +51,16 @@ public class EcoreTypeGraphBuilder {
 		});
 		pckg.getEnums().forEach(enm -> {
 			EEnum enmm = createEEnum(enm);
-			enm.getEntries().forEach(ee -> addEEnumLiteral(enmm,(EnumEntryEntity<?>) ee));
+			enm.getEntries().forEach(ee -> addEEnumLiteral(enmm, (EnumEntryEntity<?>) ee, enm));
 		});
 	}
 
 	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, EcoreTypeResolver resolver) {
 		this(pckg, targetUri, null, resolver);
 	}
-	
-	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList, EcoreTypeResolver resolver) {
+
+	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList, EcoreTypeResolver resolver,
+			ResourceSet resSet) {
 		resolver.resolveUnresovedTypes();
 
 		for (EcoreTypeGraphBuilder builder : graphBuilderList) {
@@ -74,10 +68,8 @@ public class EcoreTypeGraphBuilder {
 		}
 		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
 		Map<String, Object> m = reg.getExtensionToFactoryMap();
-		m.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());
+		m.put(EcorePackage.eNAME, new EcoreResourceFactoryImpl());
 
-		// Obtain a new resource set
-		ResourceSet resSet = new ResourceSetImpl();
 		List<Resource> resources = new ArrayList<>();
 		// create a resource
 		try {
@@ -122,11 +114,12 @@ public class EcoreTypeGraphBuilder {
 
 		if (attr.isEnumType()) {
 			resolver.resolveAttributeEnum(attribute, (AttributeEntity<String>) attr);
-		}else {
-			attribute.setEType(mapETypes(attr.getType()));
-			
+		} else {
+			attribute.setEType(EmfGraphBuilderUtils.mapETypes(attr.getType()));
+
 			if (attr.isHasDefaultValue()) {
-				attribute.setDefaultValue(attr.getDefaultValue());
+				Object val = EmfGraphBuilderUtils.mapVals(attr.getType(), attr.getDefaultValue());
+				attribute.setDefaultValue(val);
 			}
 		}
 
@@ -200,26 +193,19 @@ public class EcoreTypeGraphBuilder {
 		this.ePackage.getEClassifiers().add(eenum);
 		return eenum;
 	}
-	
-	private EEnumLiteral addEEnumLiteral(final EEnum ee,final EnumEntryEntity<?> eee) {
+
+	private EEnumLiteral addEEnumLiteral(final EEnum ee, final EnumEntryEntity<?> eee, final EnumEntity<?> eentity) {
 		final EEnumLiteral eenumLit = EcoreFactory.eINSTANCE.createEEnumLiteral();
 		resolver.store(eee.getReferenceId(), eenumLit);
 		eenumLit.setName(eee.getName());
 		if (eee.isHasDefaultValue()) {
-			eenumLit.setValue(Integer.valueOf(eee.getDefaultValue().toString()));
+			Platform.getLog(EditorActivator.getDefault().getBundle())
+					.info("[EEnumLiteral DEBUG] " + eentity.getType() + " | " + eee.getDefaultValue().toString());
+			if (eentity.getType() == "int" || eentity.getType() == "float" || eentity.getType() == "double") {
+				eenumLit.setValue(Integer.valueOf(Double.valueOf(eee.getDefaultValue().toString()).intValue()));
+			}
 		}
 		ee.getELiterals().add(eenumLit);
 		return eenumLit;
-	}
-	
-	private EDataType mapETypes(String mmlType) {
-		return switch (mmlType) {
-			case "string" -> EcorePackage.Literals.ESTRING;
-			case "float" -> EcorePackage.Literals.EFLOAT;
-			case "double" -> EcorePackage.Literals.EDOUBLE;
-			case "int" -> EcorePackage.Literals.EINT;
-			case "boolean" -> EcorePackage.Literals.EBOOLEAN;
-			default -> EcorePackage.Literals.ESTRING;
-		};
 	}
 }

@@ -1,29 +1,17 @@
 package de.nexus.emml;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 
 import com.google.gson.Gson;
-import com.sun.glass.ui.Window;
-import com.sun.javafx.stage.StageHelper;
-
 import de.nexus.emml.generator.DeserializedGenerator;
-import de.nexus.emml.generator.EcoreTypeGraphBuilder;
-import de.nexus.emml.generator.EcoreTypeResolver;
+import de.nexus.emml.generator.EmfResourceBuilder;
 import de.nexus.emml.generator.GeneratorDeserializer;
-import de.nexus.emml.generator.GeneratorEntry;
-import de.nexus.emml.generator.entities.ModelEntity;
-import de.nexus.emml.generator.entities.PackageEntity;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Worker.State;
@@ -36,8 +24,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import javafx.util.Duration;
+import netscape.javascript.JSException;
 
 public class MmlEditorController implements Initializable {
 
@@ -110,8 +98,13 @@ public class MmlEditorController implements Initializable {
 				String serializedInitializer = gson.toJson(syncInitializer.getModels());
 				String escapedSerializedInitializer = StringEscapeUtils.escapeJavaScript(serializedInitializer);
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + escapedSerializedInitializer);
-				int initWorkspace = (int) webView.getEngine().executeScript(
+				int initWorkspace = -1;
+				try {
+				 initWorkspace = (int) webView.getEngine().executeScript(
 						String.format("initializeWorkspaceJson(\"%s\",`%s`)", basePath, escapedSerializedInitializer));
+				}catch(JSException ex) {
+					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] Could not access workspace initializer - is it up yet?");	
+				}
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + initWorkspace);
 				if (initWorkspace == syncInitializer.getModels().size()) {
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] INITIALIZED SUCCSSFULLY");
@@ -249,35 +242,7 @@ public class MmlEditorController implements Initializable {
 			Platform.getLog(getClass())
 					.info("Successfully constructed documents: " + String.valueOf(desGen.getGeneratorStorage().size()));
 			if (desGen.getGeneratorStorage().size() > 0) {
-				Platform.getLog(getClass()).info("Deserialize model");
-				ModelEntity modEntity = desGen.getGeneratorStorage().get(0).getModel();
-				Platform.getLog(getClass()).info("Deserialization completed!");
-				Platform.getLog(getClass()).info(modEntity.toString());
-				Platform.getLog(getClass()).info("==========[Building ecore]==========");
-				List<EcoreTypeGraphBuilder> builders = new ArrayList<>();
-				EcoreTypeResolver resolver = new EcoreTypeResolver();
-				for (GeneratorEntry genEntry : desGen.getGeneratorStorage()) {
-					String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
-					Path modelsDir = Paths.get(basePath.toString(), projectName, "model");
-					try {
-						Files.createDirectories(modelsDir);
-					} catch (IOException ex) {
-						Platform.getLog(getClass()).info(
-								"[MODEL PATH BUILDER] Could not create models directory: " + modelsDir.toString());
-					}
-					ModelEntity model = genEntry.getModel();
-					for (PackageEntity pckgEntity : model.getPackages()) {
-						String fileName = Path.of(genEntry.getUri()).getFileName().toString().replace(".mml", "") + "_"
-								+ pckgEntity.getName() + ".ecore";
-						Path filePath = Paths.get(modelsDir.toString(), fileName);
-						String packageUri = String.format("platform:/resource/%s/model/%s", projectName, fileName);
-						builders.add(new EcoreTypeGraphBuilder(pckgEntity, packageUri, filePath.toString(), resolver));
-						Platform.getLog(getClass()).info(
-								String.format("	- %s [EXPORTED to %s]", pckgEntity.getName(), filePath.toString()));
-					}
-				}
-				EcoreTypeGraphBuilder.buildEcoreFile(builders, resolver);
-				Platform.getLog(getClass()).info("Ecore created!");
+				EmfResourceBuilder.buildEmfResources(desGen.getGeneratorStorage(), basePath);
 			}
 		}
 	}

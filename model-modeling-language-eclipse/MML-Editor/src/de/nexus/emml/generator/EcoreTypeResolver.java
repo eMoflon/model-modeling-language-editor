@@ -5,13 +5,17 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import de.nexus.emml.generator.entities.AttributeEntity;
-import de.nexus.emml.generator.entities.CReferenceEntity;
+import de.nexus.emml.generator.entities.instance.AttributeEntry;
+import de.nexus.emml.generator.entities.instance.ObjectInstance;
+import de.nexus.emml.generator.entities.instance.ReferenceEntry;
 import de.nexus.emml.generator.entities.model.AttributeEntity;
 import de.nexus.emml.generator.entities.model.CReferenceEntity;
 
@@ -110,6 +114,23 @@ public class EcoreTypeResolver {
 				unresolvedAttributeEnumValues.put(attr,valueId);
 			}
 		}
+	}
+	
+	public EObject resolveObjectInstance(ObjectInstance objInst) {
+		EClass clazz = (EClass) this.classifiers.get(objInst.getReferenceTypeId());
+		return EcoreUtil.create(clazz);
+	}
+	
+	public EAttribute resolveAttribute(AttributeEntry<?> attr) {
+		return this.attributes.get(attr.getTypeId());
+	}
+	
+	public EReference resolveReference(ReferenceEntry ref) {
+		return this.references.get(ref.getTypeId());
+	}
+	
+	public EEnumLiteral resolveAttributeEnum(AttributeEntry<?> attr) {
+		return this.elits.get(attr.getValue());
 	}
 	
 	public void resolveUnresovedTypes() {

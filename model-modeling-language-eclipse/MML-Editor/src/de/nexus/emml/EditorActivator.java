@@ -1,10 +1,6 @@
 package de.nexus.emml;
 
 import java.nio.file.Path;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import javafx.application.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -25,7 +21,6 @@ public class EditorActivator extends AbstractUIPlugin {
 	private static EditorActivator plugin;
 	private MmlLanguageServer langServer;
 	
-	private Consumer<String> openFileCallback;
 	private Path lastClickedFile;
 
 	/**

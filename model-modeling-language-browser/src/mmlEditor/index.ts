@@ -66,6 +66,9 @@ function configureEditor(editorConfig: CodeEditorConfig) {
     editorConfig.setMonacoEditorOptions({
         "semanticHighlighting.enabled": true,
         fontLigatures: true,
+        smoothScrolling: true,
+        glyphMargin: true,
+        autoClosingBrackets: "always",
         bracketPairColorization: {enabled: true, independentColorPoolPerBracketType: true}
     });
     editorConfig.setLanguageClientConfigOptions(<WorkerConfigOptions>{
@@ -199,6 +202,17 @@ export function exportWorkspace() {
     return JSON.stringify(preprocessedModels);
 }
 
+export function forcePaste(text: string) {
+    if (editor != undefined) {
+        const selection = editor.getSelection();
+        if (selection != null) {
+            const id = {major: 1, minor: 1};
+            const op = {identifier: id, range: selection, text: text, forceMoveMarkers: true};
+            editor.executeEdits("clipboardConnector", [op]);
+        }
+    }
+}
+
 declare global {
     interface Window {
         getCombinedGeneratorResult: any;
@@ -206,6 +220,7 @@ declare global {
         openModel: any;
         updateModelJson: any;
         exportWorkspace: any;
+        forcePaste: any
     }
 }
 
@@ -214,3 +229,4 @@ window.initializeWorkspaceJson = initializeWorkspaceJson;
 window.openModel = openModel;
 window.updateModelJson = updateModelJson;
 window.exportWorkspace = exportWorkspace;
+window.forcePaste = forcePaste;

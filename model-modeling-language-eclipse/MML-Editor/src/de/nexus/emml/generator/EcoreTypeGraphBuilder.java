@@ -199,10 +199,10 @@ public class EcoreTypeGraphBuilder {
 		resolver.store(eee.getReferenceId(), eenumLit);
 		eenumLit.setName(eee.getName());
 		if (eee.isHasDefaultValue()) {
-			Platform.getLog(EditorActivator.getDefault().getBundle())
-					.info("[EEnumLiteral DEBUG] " + eentity.getType() + " | " + eee.getDefaultValue().toString());
-			if (eentity.getType() == "int" || eentity.getType() == "float" || eentity.getType() == "double") {
-				eenumLit.setValue(Integer.valueOf(Double.valueOf(eee.getDefaultValue().toString()).intValue()));
+			if (eentity.getType().equals("int") || eentity.getType().equals("float")
+					|| eentity.getType().equals("double")) {
+				int val = Integer.valueOf(Double.valueOf(eee.getDefaultValue().toString()).intValue());
+				eenumLit.setValue(val);
 			}
 		}
 		ee.getELiterals().add(eenumLit);

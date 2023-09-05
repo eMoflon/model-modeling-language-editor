@@ -1,5 +1,8 @@
 package de.nexus.emml;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.FlavorEvent;
+import java.awt.datatransfer.FlavorListener;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
@@ -26,6 +29,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import netscape.javascript.JSException;
+import netscape.javascript.JSObject;
 
 public class MmlEditorController implements Initializable {
 
@@ -112,6 +116,8 @@ public class MmlEditorController implements Initializable {
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] openModelResult: " + openModel(modelId));
 					this.loadingVBox.setDisable(true);
 					this.loadingVBox.setVisible(false);
+					JSObject window = (JSObject) webView.getEngine().executeScript("window");
+			        window.setMember("clipboardConnector", new MmlEditorClipboardManager());
 				} else {
 					Platform.getLog(getClass())
 							.info(String.format(
@@ -123,6 +129,13 @@ public class MmlEditorController implements Initializable {
 		this.loadingVBox.setDisable(false);
 		this.loadingVBox.setVisible(true);
 		updateAllWebView();
+		
+		/*Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
+			   @Override 
+			   public void flavorsChanged(FlavorEvent e) {
+				   Platform.getLog(getClass()).info(String.format("[CLIPBOARD UPDATE] %s | %s", e.getSource(),e.toString()));
+			   } 
+		});*/
 	}
 
 	private String getLastClickedFileModelName() {

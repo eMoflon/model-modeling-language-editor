@@ -44762,13 +44762,17 @@ var require_model_modeling_language_utils = __commonJS({
         if (arith.$type === "BinaryExpression") {
           let lType = arith.left.$type;
           let rType = arith.right.$type;
-          if (lType == "BinaryExpression") {
+          if ((0, ast_1.isBinaryExpression)(arith.left)) {
             lType = this.getArithExprType(arith.left);
+          } else if ((0, ast_1.isVariableValueExpr)(arith.left)) {
+            lType = this.resolveVariableValueType(arith.left);
           }
-          if (rType == "BinaryExpression") {
+          if ((0, ast_1.isBinaryExpression)(arith.right)) {
             rType = this.getArithExprType(arith.right);
+          } else if ((0, ast_1.isVariableValueExpr)(arith.right)) {
+            rType = this.resolveVariableValueType(arith.right);
           }
-          if (lType == rType && lType != "BoolExpr" && lType != "EnumValueExpr" && lType != "VariableValueExpr" && lType != "FunctionVariableSelectorExpr") {
+          if (lType == rType && lType != "BoolExpr" && lType != "EnumValueExpr" && lType != "VariableValueExpr" && lType != "FunctionVariableSelectorExpr" && lType != "BinaryExpression") {
             return lType;
           }
           return "StringExpr";
@@ -44794,9 +44798,32 @@ var require_model_modeling_language_utils = __commonJS({
         }
         return arith.$type;
       }
+      static resolveVariableValueType(expr) {
+        if ((0, ast_1.isVariableValueExpr)(expr) && expr.val.ref != void 0) {
+          const typing = this.getVariableTyping(expr.val.ref);
+          if (typing.dtype != void 0) {
+            if (typing.dtype == "int" || typing.dtype == "double" || typing.dtype == "float") {
+              return "NumberExpr";
+            } else if (typing.dtype == "string") {
+              return "StringExpr";
+            } else if (typing.dtype == "bool") {
+              return "BoolExpr";
+            }
+          }
+        }
+        return "StringExpr";
+      }
       static isIntArithExpr(arith) {
         if (arith.$type === "BinaryExpression") {
           return this.isIntArithExpr(arith.left) && this.isIntArithExpr(arith.right);
+        } else if ((0, ast_1.isVariableValueExpr)(arith)) {
+          if (arith.val.ref != void 0) {
+            const varTyping = this.getVariableTyping(arith.val.ref);
+            if (varTyping.dtype != void 0 && varTyping.dtype == "int") {
+              return true;
+            }
+          }
+          return false;
         }
         return (0, ast_1.isNumberExpr)(arith) && arith.value % 1 === 0;
       }
@@ -45522,7 +45549,15 @@ var require_model_modeling_language_validator = __commonJS({
         const attr = mas.attr.ref;
         if (attr != void 0 && mas.value != void 0) {
           if (attr.type.ptype != void 0 && attr.type.etype == void 0) {
-            if (attr.type.ptype == "bool" && !model_modeling_language_utils_1.ModelModelingLanguageUtils.isBoolArithExpr(mas.value)) {
+            if ((0, ast_1.isVariableValueExpr)(mas.value) && mas.value.val.ref != void 0) {
+              if (attr.type.ptype != model_modeling_language_utils_1.ModelModelingLanguageUtils.getVariableTyping(mas.value.val.ref).dtype) {
+                accept("error", `Default value does not match specified attribute type (${attr.type.ptype})`, {
+                  node: mas,
+                  property: "value",
+                  code: IssueCodes.MacroAttributeTypeDoesNotMatch
+                });
+              }
+            } else if (attr.type.ptype == "bool" && !model_modeling_language_utils_1.ModelModelingLanguageUtils.isBoolArithExpr(mas.value)) {
               accept("error", `Default value does not match specified attribute type (${attr.type.ptype})`, {
                 node: mas,
                 property: "value",
@@ -46542,6 +46577,7 @@ var require_model_modeling_language_formatter = __commonJS({
           formatter.nodes(...node.packages).prepend(langium_1.Formatting.noIndent());
           formatter.nodes(...node.macros).prepend(langium_1.Formatting.noIndent());
           formatter.nodes(...node.functions).prepend(langium_1.Formatting.noIndent());
+          formatter.nodes(...node.instances).prepend(langium_1.Formatting.noIndent());
         } else if ((0, ast_1.isImport)(node)) {
           const formatter = this.getNodeFormatter(node);
           formatter.keyword("import").append(langium_1.Formatting.oneSpace());
@@ -47422,11 +47458,17 @@ var require_mml_serializer_context = __commonJS({
       storeValue(variable, value) {
         this.variableMap.set(variable, value);
       }
+      storeUnbindedValue(value) {
+        this.unbindedValue = value;
+      }
       unsetValue(variable) {
         this.variableMap.delete(variable);
       }
       resolve(variable) {
         return this.variableMap.get(variable);
+      }
+      resolveUnbindedValue() {
+        return this.unbindedValue;
       }
       clone() {
         const newContext = new MmlSerializerContext();
@@ -47731,7 +47773,7 @@ var require_mml_instance_templates = __commonJS({
   "out/language-server/generator/mml-instance-templates.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.ObjectInstance = exports2.SerializedInstances = exports2.executeMacroCall = void 0;
+    exports2.ObjectInstance = exports2.SerializedInstances = void 0;
     var ast_1 = require_ast2();
     var mml_serializer_context_1 = require_mml_serializer_context();
     var utils_1 = require_utils2();
@@ -47753,7 +47795,62 @@ var require_mml_instance_templates = __commonJS({
       }
       return innerContext;
     }
-    exports2.executeMacroCall = executeMacroCall;
+    function executeFunctionCall(functionCall, referenceStorage, outerContext, serializer, instanceRegistry) {
+      const innerContext = new mml_serializer_context_1.MmlSerializerContext();
+      if (functionCall.func.ref != void 0) {
+        const func = functionCall.func.ref;
+        const zipped = (0, utils_1.zip)(functionCall.args, func.parameter);
+        zipped.forEach((value) => {
+          if (value[0].value != void 0 && value[0].ref == void 0) {
+            innerContext.storeValue(value[1], outerContext.evaluateArithExpr(value[0].value));
+          } else if (value[0].value == void 0 && value[0].ref != void 0 && value[0].ref.ref != void 0) {
+            const passedVariable = value[0].ref.ref;
+            const resolved = outerContext.resolve(passedVariable);
+            innerContext.storeValue(value[1], resolved);
+          }
+        });
+        for (const stmt of func.statements) {
+          if ((0, ast_1.isFunctionReturn)(stmt)) {
+            if (stmt.var != void 0 && stmt.var.ref != void 0) {
+              innerContext.storeUnbindedValue(innerContext.resolve(stmt.var.ref));
+            } else if (stmt.val != void 0) {
+              innerContext.storeUnbindedValue(innerContext.evaluateArithExpr(stmt.val.val));
+            }
+          } else {
+            executeFunctionRecursively(stmt, referenceStorage, innerContext, serializer, instanceRegistry);
+          }
+        }
+      }
+      return innerContext;
+    }
+    function executeFunctionRecursively(stmt, referenceStorage, outerContext, serializer, instanceRegistry) {
+      if ((0, ast_1.isFunctionAssignment)(stmt)) {
+        if ((0, ast_1.isFunctionCall)(stmt.call)) {
+          const innerContext = executeFunctionCall(stmt.call, referenceStorage, outerContext, serializer, instanceRegistry);
+          if (stmt.call.func.ref != void 0 && stmt.call.func.ref.returnsVar) {
+            outerContext.storeValue(stmt.var, innerContext.resolveUnbindedValue());
+          }
+        } else if ((0, ast_1.isFunctionMacroCall)(stmt.call)) {
+          const innerContext = executeMacroCall(stmt.call, referenceStorage, outerContext, serializer, instanceRegistry);
+          if (stmt.select != void 0 && stmt.select.ref != void 0) {
+            outerContext.storeValue(stmt.var, innerContext.resolve(stmt.select.ref));
+          } else {
+            outerContext.storeValue(stmt.var, innerContext);
+          }
+        }
+      } else if ((0, ast_1.isFunctionLoop)(stmt)) {
+        for (let i = stmt.lower; i < stmt.upper; i++) {
+          const newContext = outerContext.clone();
+          newContext.storeValue(stmt.var, i);
+          stmt.statements.forEach((loopStmt) => executeFunctionRecursively(loopStmt, referenceStorage, newContext, serializer, instanceRegistry));
+          newContext.unsetValue(stmt.var);
+        }
+      } else if ((0, ast_1.isFunctionCall)(stmt)) {
+        executeFunctionCall(stmt, referenceStorage, outerContext, serializer, instanceRegistry);
+      } else if ((0, ast_1.isFunctionMacroCall)(stmt)) {
+        executeMacroCall(stmt, referenceStorage, outerContext, serializer, instanceRegistry);
+      }
+    }
     var SerializedInstances = class {
       constructor(model, referenceStorage, instanceRegistry) {
         this.serializedInstances = [];
@@ -47772,16 +47869,24 @@ var require_mml_instance_templates = __commonJS({
         stmts.forEach((iStmt) => {
           var _a;
           if ((0, ast_1.isInstanceStatement)(iStmt)) {
-            if ((0, ast_1.isFunctionAssignment)(iStmt) && (0, ast_1.isFunctionMacroCall)(iStmt.call)) {
-              const innerContext = executeMacroCall(iStmt.call, referenceStorage, outerContext, this, instanceRegistry);
-              if (iStmt.select != void 0 && iStmt.select.ref != void 0) {
-                outerContext.storeValue(iStmt.var, innerContext.resolve(iStmt.select.ref));
-              } else {
-                outerContext.storeValue(iStmt.var, innerContext);
+            if ((0, ast_1.isFunctionAssignment)(iStmt)) {
+              if ((0, ast_1.isFunctionMacroCall)(iStmt.call)) {
+                const innerContext = executeMacroCall(iStmt.call, referenceStorage, outerContext, this, instanceRegistry);
+                if (iStmt.select != void 0 && iStmt.select.ref != void 0) {
+                  outerContext.storeValue(iStmt.var, innerContext.resolve(iStmt.select.ref));
+                } else {
+                  outerContext.storeValue(iStmt.var, innerContext);
+                }
+              } else if ((0, ast_1.isFunctionCall)(iStmt.call)) {
+                const innerContext = executeFunctionCall(iStmt.call, referenceStorage, outerContext, this, instanceRegistry);
+                if (iStmt.call.func.ref != void 0 && iStmt.call.func.ref.returnsVar) {
+                  outerContext.storeValue(iStmt.var, innerContext.resolveUnbindedValue());
+                }
               }
-            }
-            if ((0, ast_1.isFunctionMacroCall)(iStmt)) {
+            } else if ((0, ast_1.isFunctionMacroCall)(iStmt)) {
               executeMacroCall(iStmt, referenceStorage, outerContext, this, instanceRegistry);
+            } else if ((0, ast_1.isFunctionCall)(iStmt)) {
+              executeFunctionCall(iStmt, referenceStorage, outerContext, this, instanceRegistry);
             }
           } else if ((0, ast_1.isInstanceLoop)(iStmt) && iStmt.var.ref != void 0 && iStmt.ref.ref != void 0) {
             const obj = outerContext.resolve(iStmt.var.ref);
@@ -47793,7 +47898,6 @@ var require_mml_instance_templates = __commonJS({
                 newContext.storeValue(iStmt.ivar, referencedObj);
                 this.executeRecursively(iStmt.statements, referenceStorage, newContext, instanceRegistry);
                 newContext.unsetValue(iStmt.ivar);
-                outerContext.enhance(newContext);
               }
             });
           }

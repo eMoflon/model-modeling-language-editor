@@ -34,7 +34,6 @@ public class XMIInstanceResolver {
 						EObject target = this.objects.get(refId);
 						oldVals.add(target);
 					}
-					base.eSet(eref, oldVals);
 				} else {
 					if (ref.getReferencedIds().size() > 0) {
 						String refId = ref.getReferencedIds().get(0);

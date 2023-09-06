@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import de.nexus.emml.EditorActivator;
 import de.nexus.emml.generator.entities.model.AbstractClassEntity;
 import de.nexus.emml.generator.entities.model.AttributeEntity;
 import de.nexus.emml.generator.entities.model.CReferenceEntity;
@@ -149,13 +147,13 @@ public class EcoreTypeGraphBuilder {
 		}
 
 		if (cref.getMultiplicity().isHasUpperBound()) {
-			if (cref.getMultiplicity().isUpperIsN0()) {
-				reference.setUpperBound(0);
-			} else if (cref.getMultiplicity().isUpperIsN()) {
-				reference.setUpperBound(1);
+			if (cref.getMultiplicity().isUpperIsN0() || cref.getMultiplicity().isUpperIsN()) {
+				reference.setUpperBound(-1);
 			} else {
 				reference.setUpperBound(cref.getMultiplicity().getUpper());
 			}
+		} else {
+			reference.setUpperBound(-1);
 		}
 
 		reference.setChangeable(!cref.getModifiers().isReadonly());

@@ -8,10 +8,10 @@ public class AbstractClassEntity {
 	private String name;
 	private boolean isAbstract;
 	private boolean isInterface;
-	private ArrayList<AttributeEntity<?>> attributes;
-	private ArrayList<CReferenceEntity> references;
-	private ArrayList<String> extendsIds;
-	private ArrayList<String> implementsIds;
+	private ArrayList<AttributeEntity<?>> attributes = new ArrayList<AttributeEntity<?>>();
+	private ArrayList<CReferenceEntity> references = new ArrayList<CReferenceEntity>();
+	private ArrayList<String> extendsIds = new ArrayList<String>();
+	private ArrayList<String> implementsIds = new ArrayList<String>();
 
 	public String getReferenceId() {
 		return referenceId;

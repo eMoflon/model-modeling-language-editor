@@ -21,8 +21,6 @@ public class EmfResourceBuilder {
 	public static void buildEmfResources(ArrayList<GeneratorEntry> generators, File basePath) {
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("Deserialize model");
 		ModelEntity modEntity = generators.get(0).getModel();
-		Platform.getLog(EditorActivator.getDefault().getBundle()).info("Deserialization completed!");
-		Platform.getLog(EditorActivator.getDefault().getBundle()).info(modEntity.toString());
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("==========[Building resources]==========");
 		List<EcoreTypeGraphBuilder> typeBuilders = new ArrayList<>();
 		List<XMIInstanceGraphBuilder> instanceBuilders = new ArrayList<>();

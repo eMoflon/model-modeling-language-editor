@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
@@ -180,6 +181,11 @@ public class EcoreTypeGraphBuilder {
 		eClass.setName(ace.getName());
 		eClass.setAbstract(ace.isAbstract());
 		eClass.setInterface(ace.isInterface());
+		if (ace.getExtendsIds().size() > 0 || ace.getImplementsIds().size() > 0) {
+			List<String> allSupertypes = Stream.concat(ace.getExtendsIds().stream(), ace.getImplementsIds().stream())
+					.toList();
+			resolver.resolveSupertypes(eClass, allSupertypes);
+		}
 		this.ePackage.getEClassifiers().add(eClass);
 		return eClass;
 	}

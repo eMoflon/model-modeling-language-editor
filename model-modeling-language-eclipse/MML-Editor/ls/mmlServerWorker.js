@@ -45018,6 +45018,9 @@ var require_model_modeling_language_validator = __commonJS({
         IMacro: [
           validator.checkUniqueMacroVariableNames
         ],
+        MacroInstance: [
+          validator.checkMacroInstanceInstanciator
+        ],
         MacroAttributeStatement: [
           validator.checkMacroAttributeStatementType
         ],
@@ -45100,6 +45103,10 @@ var require_model_modeling_language_validator = __commonJS({
       IssueCodes2.InstanceLoopTypeMismatch = "instance-loop-type-mismatch";
       IssueCodes2.ArithExpressionUnsupportedOperation = "arith-expression-unsupported-operation";
       IssueCodes2.InvalidTupleSelectorInParameter = "invalid-tuple-selector-in-parameter";
+      IssueCodes2.InstantiationOfInterface = "instantiation-of-interface";
+      IssueCodes2.InstantiationOfAbstractClass = "instantiation-of-abstract-class";
+      IssueCodes2.InstantiationOfEnum = "instantiation-of-enum";
+      IssueCodes2.InstantiationOfPrimitiveType = "instantiation-of-primitive-type";
     })(IssueCodes = exports2.IssueCodes || (exports2.IssueCodes = {}));
     var ModelModelingLanguageValidator = class {
       constructor(services) {
@@ -46123,6 +46130,47 @@ var require_model_modeling_language_validator = __commonJS({
           }
         }
       }
+      checkMacroInstanceInstanciator(mInst, accept) {
+        let typing = null;
+        let varNode = null;
+        if (mInst.nInst != void 0 && mInst.iVar == void 0) {
+          typing = mInst.nInst.typing;
+          varNode = mInst.nInst;
+        } else if (mInst.nInst == void 0 && mInst.iVar != void 0 && mInst.iVar.ref != void 0) {
+          typing = mInst.iVar.ref.typing;
+          varNode = mInst.iVar.ref;
+        }
+        if (typing != null && varNode != null) {
+          if (typing.type != void 0 && typing.type.ref != void 0 && typing.dtype == void 0) {
+            const refType = typing.type.ref;
+            if ((0, ast_1.isInterface)(refType)) {
+              const intf = refType;
+              accept("error", `Cannot instantiate interface ${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(intf, intf.name)}`, {
+                node: varNode,
+                code: IssueCodes.InstantiationOfInterface
+              });
+            } else if ((0, ast_1.isClass)(refType)) {
+              const cls = refType;
+              if (cls.abstract) {
+                accept("error", `Cannot instantiate abstract class ${model_modeling_language_utils_1.ModelModelingLanguageUtils.getQualifiedClassName(cls, cls.name)}`, {
+                  node: varNode,
+                  code: IssueCodes.InstantiationOfAbstractClass
+                });
+              }
+            } else if ((0, ast_1.isEnum)(refType)) {
+              accept("error", `Cannot instantiate enum!`, {
+                node: varNode,
+                code: IssueCodes.InstantiationOfEnum
+              });
+            }
+          } else if (typing.type == void 0 && typing.dtype != void 0) {
+            accept("error", `Cannot instantiate with primitive type ${typing.dtype}`, {
+              node: varNode,
+              code: IssueCodes.InstantiationOfPrimitiveType
+            });
+          }
+        }
+      }
     };
     exports2.ModelModelingLanguageValidator = ModelModelingLanguageValidator;
   }
@@ -46804,20 +46852,19 @@ var require_model_modeling_languge_scope_provider = __commonJS({
           }
           if (refInstVar.typing.type != void 0 && refInstVar.typing.type.ref != void 0 && (0, ast_1.isClass)(refInstVar.typing.type.ref)) {
             const containerClass = refInstVar.typing.type.ref;
-            const precomputed = (0, langium_1.getDocument)(containerClass).precomputedScopes;
-            if (precomputed) {
-              const scopes = [];
-              const allDescriptions = precomputed.get(containerClass);
-              if (allDescriptions.length > 0) {
-                scopes.push((0, langium_1.stream)(allDescriptions).filter((desc) => (0, ast_1.isAttribute)(desc.node)));
-              } else {
+            const scopes = [];
+            scopes.push((0, langium_1.stream)(this.getAllInheritedAttributes(containerClass).map((a) => {
+              const name = this.nameProvider.getName(a);
+              if (name != void 0) {
+                return this.descriptions.createDescription(a, name);
               }
-              let result = langium_1.EMPTY_SCOPE;
-              for (let i = scopes.length - 1; i >= 0; i--) {
-                result = this.createScope(scopes[i], result);
-              }
-              return result;
+              return void 0;
+            })).filter((d) => d != void 0));
+            let result = langium_1.EMPTY_SCOPE;
+            for (let i = scopes.length - 1; i >= 0; i--) {
+              result = this.createScope(scopes[i], result);
             }
+            return result;
           }
           console.log(`[getScope] ${context.property} | ${context.index}`);
         } else if ((0, ast_1.isMacroAssignStatement)(context.container)) {
@@ -46836,32 +46883,33 @@ var require_model_modeling_languge_scope_provider = __commonJS({
           }
           if (refInstVar.typing.type != void 0 && refInstVar.typing.type.ref != void 0 && (0, ast_1.isClass)(refInstVar.typing.type.ref)) {
             const containerClass = refInstVar.typing.type.ref;
-            const precomputed = (0, langium_1.getDocument)(containerClass).precomputedScopes;
             const scopes = [];
-            if (precomputed) {
-              if (context.property === "cref") {
-                const allDescriptions = precomputed.get(containerClass);
-                if (allDescriptions.length > 0) {
-                  scopes.push((0, langium_1.stream)(allDescriptions).filter((desc) => (0, ast_1.isCReference)(desc.node)));
-                } else {
+            if (context.property === "cref") {
+              scopes.push((0, langium_1.stream)(this.getAllInheritedReferences(containerClass).map((a) => {
+                const name = this.nameProvider.getName(a);
+                if (name != void 0) {
+                  return this.descriptions.createDescription(a, name);
                 }
-              } else if (context.property === "instance") {
-                const iMacro = macroInst.$container;
-                const allDescriptions = precomputed.get(iMacro);
-                if (allDescriptions.length > 0) {
-                  scopes.push((0, langium_1.stream)(allDescriptions).filter((desc) => (0, ast_1.isTypedVariable)(desc.node)));
-                } else {
-                }
-                scopes.push((0, langium_1.stream)(iMacro.instances).filter((e) => e != void 0 && e.nInst != void 0 && e.iVar == void 0).map((e) => e.nInst).map((v) => {
-                  if (v != void 0) {
-                    const name = this.nameProvider.getName(v);
-                    if (name != void 0) {
-                      return this.descriptions.createDescription(v, name);
-                    }
+                return void 0;
+              })).filter((d) => d != void 0));
+            } else if (context.property === "instance") {
+              scopes.push((0, langium_1.stream)(macroInst.$container.instances.filter((inst) => inst.nInst != void 0 && inst.iVar == void 0).map((mi) => {
+                if (mi != void 0 && mi.nInst != void 0) {
+                  const tVar = mi.nInst;
+                  const name = this.nameProvider.getName(tVar);
+                  if (name != void 0) {
+                    return this.descriptions.createDescription(tVar, name);
                   }
-                  return void 0;
-                }).filter((d) => d != void 0));
-              }
+                }
+                return void 0;
+              })).filter((d) => d != void 0));
+              scopes.push((0, langium_1.stream)(macroInst.$container.parameter.map((tVar) => {
+                const name = this.nameProvider.getName(tVar);
+                if (name != void 0) {
+                  return this.descriptions.createDescription(tVar, name);
+                }
+                return void 0;
+              })).filter((d) => d != void 0));
             }
             let result = langium_1.EMPTY_SCOPE;
             for (let i = scopes.length - 1; i >= 0; i--) {
@@ -46924,7 +46972,7 @@ var require_model_modeling_languge_scope_provider = __commonJS({
             const scopes = [];
             if (instLoop.var.ref != void 0 && instLoop.var.ref.typing.type != void 0 && instLoop.var.ref.typing.type.ref != void 0 && (0, ast_1.isClass)(instLoop.var.ref.typing.type.ref)) {
               const sourceClass = instLoop.var.ref.typing.type.ref;
-              scopes.push((0, langium_1.stream)(sourceClass.body).filter((x) => (0, ast_1.isCReference)(x)).map((v) => {
+              scopes.push((0, langium_1.stream)(this.getAllInheritedReferences(sourceClass)).map((v) => {
                 if (v != void 0) {
                   const name = this.nameProvider.getName(v);
                   if (name != void 0) {
@@ -47169,6 +47217,70 @@ var require_model_modeling_languge_scope_provider = __commonJS({
           }
         }
         return void 0;
+      }
+      getAllInheritedAttributes(aclass) {
+        let combinedResult = [];
+        if ((0, ast_1.isClass)(aclass)) {
+          aclass.body.forEach((stmt) => {
+            if ((0, ast_1.isAttribute)(stmt)) {
+              combinedResult.push(stmt);
+            }
+          });
+          aclass.extendedClasses.forEach((extClass) => {
+            if (extClass.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedAttributes(extClass.ref));
+            }
+          });
+          aclass.implementedInterfaces.forEach((implInterface) => {
+            if (implInterface.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedAttributes(implInterface.ref));
+            }
+          });
+        } else if ((0, ast_1.isInterface)(aclass)) {
+          aclass.body.forEach((stmt) => {
+            if ((0, ast_1.isAttribute)(stmt)) {
+              combinedResult.push(stmt);
+            }
+          });
+          aclass.extendedInterfaces.forEach((implInterface) => {
+            if (implInterface.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedAttributes(implInterface.ref));
+            }
+          });
+        }
+        return combinedResult;
+      }
+      getAllInheritedReferences(aclass) {
+        let combinedResult = [];
+        if ((0, ast_1.isClass)(aclass)) {
+          aclass.body.forEach((stmt) => {
+            if ((0, ast_1.isCReference)(stmt)) {
+              combinedResult.push(stmt);
+            }
+          });
+          aclass.extendedClasses.forEach((extClass) => {
+            if (extClass.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedReferences(extClass.ref));
+            }
+          });
+          aclass.implementedInterfaces.forEach((implInterface) => {
+            if (implInterface.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedReferences(implInterface.ref));
+            }
+          });
+        } else if ((0, ast_1.isInterface)(aclass)) {
+          aclass.body.forEach((stmt) => {
+            if ((0, ast_1.isCReference)(stmt)) {
+              combinedResult.push(stmt);
+            }
+          });
+          aclass.extendedInterfaces.forEach((implInterface) => {
+            if (implInterface.ref != void 0) {
+              combinedResult.push(...this.getAllInheritedReferences(implInterface.ref));
+            }
+          });
+        }
+        return combinedResult;
       }
     };
     exports2.ModelModelingLanguageScopeProvider = ModelModelingLanguageScopeProvider;
@@ -47603,18 +47715,18 @@ var require_mml_entity_templates = __commonJS({
       constructor(abstractClass, referenceStorage) {
         this.attributes = [];
         this.references = [];
-        this.extendesIds = [];
+        this.extendsIds = [];
         this.implementsIds = [];
         this.referenceId = referenceStorage.getNodeReferenceId(abstractClass);
         this.name = abstractClass.name;
         if ((0, ast_1.isInterface)(abstractClass)) {
           this.isAbstract = false;
           this.isInterface = true;
-          abstractClass.extendedInterfaces.forEach((extInterface) => this.extendesIds.push(referenceStorage.resolveReference(extInterface)));
+          abstractClass.extendedInterfaces.forEach((extInterface) => this.extendsIds.push(referenceStorage.resolveReference(extInterface)));
         } else {
           this.isInterface = false;
           this.isAbstract = abstractClass.abstract;
-          abstractClass.extendedClasses.forEach((extClasses) => this.extendesIds.push(referenceStorage.resolveReference(extClasses)));
+          abstractClass.extendedClasses.forEach((extClasses) => this.extendsIds.push(referenceStorage.resolveReference(extClasses)));
           abstractClass.implementedInterfaces.forEach((implInterfaces) => this.implementsIds.push(referenceStorage.resolveReference(implInterfaces)));
         }
         abstractClass.body.forEach((statement) => {

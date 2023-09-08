@@ -7,16 +7,19 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prepare": "npm run copy:worker && npm run build && npm run build:ls",
+    "fullbuild": "npm run clean && npm run build:mml && npm run copy:prepare && npm run copy:worker && npm run copy:base && npm run build",
+    "copy:prepare": "shx mkdir public",
     "copy:worker": "shx cp -fr ./node_modules/monaco-editor-workers/dist/workers/editorWorker-es.js ./public/",
+    "copy:mml": "shx cp -fr ./node_modules/model-modeling-language/out/public/* ./public/",
+    "copy:base": "shx cp -fr ./base/* ./public/",
+    "build:mml": "npm --prefix node_modules/model-modeling-language run fullbuild:ls",
     "build": "tsc -p tsconfig.json --noEmit && esbuild ./src/mmlEditor/index.ts --bundle --target=es2020 --format=esm --loader:.ttf=file --external:fs --external:path --sourcemap --outfile=./public/mmlEditor.js",
-    "_build:ls_": "esbuild ./base/main-browser.js --bundle --format=esm --sourcemap --outfile=./public/mmlServerWorker.js",
-    "build:ls": "shx cp ./base/mmlServerWorker.js ./public/ && shx cp ./base/mmlServerWorker.js.map ./public/",
     "serve": "npx http-server public -p 3000",
-    "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -p tsconfig.json -w\" \"esbuild ./src/mmlEditor/index.ts --bundle --target=es2020 --format=esm --loader:.ttf=file --external:fs --external:path --sourcemap --outfile=./public/mmlEditor.js --watch\""
+    "clean": "shx rm -fr ./public"
   },
   "devDependencies": {
-    "typescript":"^5.0.0",
+    "model-modeling-language": "file:../../model-modeling-language",
+    "typescript": "^5.0.0",
     "esbuild": "^0.15.8",
     "langium": "^1.0.0",
     "js-base64": "^3.7.4",

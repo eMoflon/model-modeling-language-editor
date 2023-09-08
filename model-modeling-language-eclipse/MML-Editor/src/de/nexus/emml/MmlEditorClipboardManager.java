@@ -21,6 +21,7 @@ public class MmlEditorClipboardManager {
 		Platform.getLog(EditorActivator.getDefault().getBundle())
 		.info("[MML CLIPBOARD] COPY: " + val);
 		final Clipboard sysClipboard = Clipboard.getSystemClipboard();
+		sysClipboard.clear();
 		final ClipboardContent content = new ClipboardContent();
         content.putString(val);
         sysClipboard.setContent(content);

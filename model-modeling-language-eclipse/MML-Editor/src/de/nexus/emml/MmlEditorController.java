@@ -12,9 +12,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 
 import com.google.gson.Gson;
-import de.nexus.emml.generator.DeserializedGenerator;
 import de.nexus.emml.generator.EmfResourceBuilder;
-import de.nexus.emml.generator.GeneratorDeserializer;
+import de.nexus.emml.generator.WebWorkerExportResult;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Worker.State;
@@ -130,12 +129,12 @@ public class MmlEditorController implements Initializable {
 		this.loadingVBox.setVisible(true);
 		updateAllWebView();
 		
-		/*Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
+		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
 			   @Override 
 			   public void flavorsChanged(FlavorEvent e) {
 				   Platform.getLog(getClass()).info(String.format("[CLIPBOARD UPDATE] %s | %s", e.getSource(),e.toString()));
 			   } 
-		});*/
+		});
 	}
 
 	private String getLastClickedFileModelName() {
@@ -244,7 +243,7 @@ public class MmlEditorController implements Initializable {
 		Platform.getLog(getClass()).info("Export model");
 		String genResult = (String) webView.getEngine().executeScript("getCombinedGeneratorResult()");
 		Platform.getLog(getClass()).info(genResult.toString());
-		DeserializedGenerator desGen = GeneratorDeserializer.deserialize(genResult);
+		WebWorkerExportResult desGen = WebWorkerExportResult.deserialize(genResult);
 		if (desGen.hasErrors()) {
 			Alert alert = new Alert(AlertType.ERROR,
 					"There are " + String.valueOf(desGen.getDiagnosticStorage().stream().map(x -> x.getErrorCount())

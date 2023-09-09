@@ -10,19 +10,19 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class NestedInitializerDeserializer implements JsonDeserializer<DeserializedGenerator> {
+public class WebWorkerExportDeserializer implements JsonDeserializer<WebWorkerExportResult> {
 
 	@Override
-	public DeserializedGenerator deserialize(JsonElement elm, Type type, JsonDeserializationContext context)
+	public WebWorkerExportResult deserialize(JsonElement elm, Type type, JsonDeserializationContext context)
 			throws JsonParseException {
 		JsonArray genArray = elm.getAsJsonObject().get("generator").getAsJsonArray();
 		JsonArray diaArray = elm.getAsJsonObject().get("diagnostic").getAsJsonArray();
 
-		ArrayList<GeneratorEntry> genEntries = genArray.asList().stream().map(entry -> GeneratorEntry.parse(entry))
+		ArrayList<WebWorkerGeneratorEntry> genEntries = genArray.asList().stream().map(entry -> WebWorkerGeneratorEntry.parse(entry))
 				.collect(Collectors.toCollection(ArrayList::new));
-		ArrayList<DiagnosticEntry> diaEntries = diaArray.asList().stream().map(entry -> DiagnosticEntry.parse(entry))
+		ArrayList<WebWorkerDiagnosticEntry> diaEntries = diaArray.asList().stream().map(entry -> WebWorkerDiagnosticEntry.parse(entry))
 				.collect(Collectors.toCollection(ArrayList::new));
-		return new DeserializedGenerator(genEntries, diaEntries);
+		return new WebWorkerExportResult(genEntries, diaEntries);
 	}
 
 }

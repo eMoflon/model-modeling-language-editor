@@ -58,7 +58,7 @@ public class XMIInstanceGraphBuilder {
 				 * node
 				 */
 				builder.objects.forEach(obj -> resource.getContents().add(obj));
-				Platform.getLog(EditorActivator.getDefault().getBundle()).info("[XMIBuilder DEBUG] Resource contains: "+resource.getContents().size());
+				//Platform.getLog(EditorActivator.getDefault().getBundle()).info("[XMIBuilder DEBUG] Resource contains: "+resource.getContents().size());
 				resources.add(resource);
 			}
 		} catch (NullPointerException e) {

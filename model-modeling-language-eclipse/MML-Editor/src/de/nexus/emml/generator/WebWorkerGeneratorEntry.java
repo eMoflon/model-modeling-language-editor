@@ -10,30 +10,30 @@ import de.nexus.emml.EditorActivator;
 import de.nexus.emml.generator.entities.instance.GeneratorInstanceWrapper;
 import de.nexus.emml.generator.entities.model.ModelEntity;
 
-public class GeneratorEntry {
+public class WebWorkerGeneratorEntry {
 	private URI uri;
 	private String gen;
-	private MmlGeneratorResult generatorResult;
+	private WebWorkerParsedGenerator generatorResult;
 
-	public static GeneratorEntry parse(String json) {
-		return new Gson().fromJson(json, GeneratorEntry.class);
+	public static WebWorkerGeneratorEntry parse(String json) {
+		return new Gson().fromJson(json, WebWorkerGeneratorEntry.class);
 	}
 
-	public static GeneratorEntry parse(JsonElement json) {
-		return new Gson().fromJson(json, GeneratorEntry.class);
+	public static WebWorkerGeneratorEntry parse(JsonElement json) {
+		return new Gson().fromJson(json, WebWorkerGeneratorEntry.class);
 	}
 
 	public ModelEntity getModel() {
 		if (this.generatorResult == null) {
-			this.generatorResult = MmlEntityTemplates.deserialize(gen);
+			this.generatorResult = WebWorkerParsedGenerator.deserialize(gen);
 		}
 		return this.generatorResult.getTypegraph();
 	} 
 	
 	public GeneratorInstanceWrapper getInstances() {
-		Platform.getLog(EditorActivator.getDefault().getBundle()).info("[XMIBuilder DEBUG] Deserialize GEN: "+gen);
+		//Platform.getLog(EditorActivator.getDefault().getBundle()).info("[XMIBuilder DEBUG] Deserialize GEN: "+gen);
 		if (this.generatorResult == null) {
-			this.generatorResult = MmlEntityTemplates.deserialize(gen);
+			this.generatorResult = WebWorkerParsedGenerator.deserialize(gen);
 		}
 		return this.generatorResult.getInstancegraph();
 	} 

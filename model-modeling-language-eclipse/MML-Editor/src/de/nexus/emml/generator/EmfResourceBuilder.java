@@ -18,9 +18,8 @@ import de.nexus.emml.generator.entities.model.ModelEntity;
 import de.nexus.emml.generator.entities.model.PackageEntity;
 
 public class EmfResourceBuilder {
-	public static void buildEmfResources(ArrayList<GeneratorEntry> generators, File basePath) {
+	public static void buildEmfResources(ArrayList<WebWorkerGeneratorEntry> generators, File basePath) {
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("Deserialize model");
-		ModelEntity modEntity = generators.get(0).getModel();
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("==========[Building resources]==========");
 		List<EcoreTypeGraphBuilder> typeBuilders = new ArrayList<>();
 		List<XMIInstanceGraphBuilder> instanceBuilders = new ArrayList<>();
@@ -28,7 +27,7 @@ public class EmfResourceBuilder {
 		XMIInstanceResolver instanceResolver = new XMIInstanceResolver();
 		// Obtain a new resource set
 		ResourceSet resSet = new ResourceSetImpl();
-		for (GeneratorEntry genEntry : generators) {
+		for (WebWorkerGeneratorEntry genEntry : generators) {
 			String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
 			Path modelsDir = Paths.get(basePath.toString(), projectName, "model");
 			try {
@@ -51,7 +50,7 @@ public class EmfResourceBuilder {
 		EcoreTypeGraphBuilder.buildEcoreFile(typeBuilders, typeResolver,resSet);
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("Ecore created!");
 		
-		for (GeneratorEntry genEntry : generators) {
+		for (WebWorkerGeneratorEntry genEntry : generators) {
 			String projectName = Path.of(genEntry.getUri()).subpath(0, 1).toString();
 			Path modelsDir = Paths.get(basePath.toString(), projectName, "model");
 			try {

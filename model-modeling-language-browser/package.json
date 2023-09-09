@@ -7,7 +7,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "fullbuild": "npm run clean && npm run build:mml && npm run copy:prepare && npm run copy:worker && npm run copy:base && npm run build",
+    "fullbuild": "npm run clean && npm run build:mml && npm run copy:prepare && npm run copy:worker && npm run copy:base && npm run copy:mml && npm run build",
     "copy:prepare": "shx mkdir public",
     "copy:worker": "shx cp -fr ./node_modules/monaco-editor-workers/dist/workers/editorWorker-es.js ./public/",
     "copy:mml": "shx cp -fr ./node_modules/model-modeling-language/out/public/* ./public/",

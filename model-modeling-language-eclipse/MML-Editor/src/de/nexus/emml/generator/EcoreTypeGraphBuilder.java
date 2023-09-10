@@ -121,13 +121,15 @@ public class EcoreTypeGraphBuilder {
 				attribute.setDefaultValue(val);
 			}
 		}
-
+		
+		attribute.setDerived(attr.getModifiers().isDerived());
 		attribute.setOrdered(attr.getModifiers().isOrdered());
 		attribute.setTransient(attr.getModifiers().isTransient());
 		attribute.setUnique(attr.getModifiers().isUnique());
 		attribute.setUnsettable(attr.getModifiers().isUnsettable());
 		attribute.setVolatile(attr.getModifiers().isVolatile());
 		attribute.setChangeable(!attr.getModifiers().isReadonly());
+		attribute.setID(attr.getModifiers().isId());
 	}
 
 	private void addReference(EClass containerClass, CReferenceEntity cref) {
@@ -157,6 +159,7 @@ public class EcoreTypeGraphBuilder {
 			reference.setUpperBound(-1);
 		}
 
+		reference.setDerived(cref.getModifiers().isDerived());
 		reference.setChangeable(!cref.getModifiers().isReadonly());
 		reference.setVolatile(cref.getModifiers().isVolatile());
 		reference.setUnsettable(cref.getModifiers().isUnsettable());

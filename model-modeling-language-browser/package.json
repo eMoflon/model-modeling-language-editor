@@ -12,13 +12,14 @@
     "copy:worker": "shx cp -fr ./node_modules/monaco-editor-workers/dist/workers/editorWorker-es.js ./public/",
     "copy:mml": "shx cp -fr ./node_modules/model-modeling-language/out/public/* ./public/",
     "copy:base": "shx cp -fr ./base/* ./public/",
+    "install:mml": "npm --prefix node_modules/model-modeling-language install",
     "build:mml": "npm --prefix node_modules/model-modeling-language run fullbuild:ls",
     "build": "tsc -p tsconfig.json --noEmit && esbuild ./src/mmlEditor/index.ts --bundle --target=es2020 --format=esm --loader:.ttf=file --external:fs --external:path --sourcemap --outfile=./public/mmlEditor.js",
     "serve": "npx http-server public -p 3000",
     "clean": "shx rm -fr ./public"
   },
   "devDependencies": {
-    "model-modeling-language": "file:../../model-modeling-language",
+    "model-modeling-language": "git+https://github.com/JanikNex/model-modeling-language.git",
     "typescript": "^5.0.0",
     "esbuild": "^0.15.8",
     "langium": "^1.0.0",

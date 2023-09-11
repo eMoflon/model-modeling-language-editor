@@ -25,6 +25,16 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
                         <id>npm run clean</id>
                         <goals>
                             <goal>npm</goal>
@@ -35,12 +45,12 @@
                         <phase>process-resources</phase>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>npm run install:mml</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>run install:mml</arguments>
                         </configuration>
                         <phase>process-resources</phase>
                     </execution>

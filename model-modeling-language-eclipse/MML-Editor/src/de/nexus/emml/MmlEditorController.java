@@ -17,10 +17,17 @@ import de.nexus.emml.generator.WebWorkerExportResult;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Worker.State;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
@@ -28,7 +35,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import netscape.javascript.JSException;
-import netscape.javascript.JSObject;
 
 public class MmlEditorController implements Initializable {
 
@@ -57,6 +63,15 @@ public class MmlEditorController implements Initializable {
 	private MenuItem quitMenuItem;
 
 	@FXML
+	private MenuItem editCutItem;
+
+	@FXML
+	private MenuItem editCopyItem;
+
+	@FXML
+	private MenuItem editPasteItem;
+
+	@FXML
 	private VBox loadingVBox;
 
 	private WebEngine engine;
@@ -67,7 +82,6 @@ public class MmlEditorController implements Initializable {
 
 	public MmlEditorController() {
 		Platform.getLog(getClass()).info("Init MmlEditor");
-
 	}
 
 	@Override
@@ -103,10 +117,11 @@ public class MmlEditorController implements Initializable {
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + escapedSerializedInitializer);
 				int initWorkspace = -1;
 				try {
-				 initWorkspace = (int) webView.getEngine().executeScript(
-						String.format("initializeWorkspaceJson(\"%s\",`%s`)", basePath, escapedSerializedInitializer));
-				}catch(JSException ex) {
-					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] Could not access workspace initializer - is it up yet?");	
+					initWorkspace = (int) webView.getEngine().executeScript(String
+							.format("initializeWorkspaceJson(\"%s\",`%s`)", basePath, escapedSerializedInitializer));
+				} catch (JSException ex) {
+					Platform.getLog(getClass())
+							.info("[EDITOR INITIALIZER] Could not access workspace initializer - is it up yet?");
 				}
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + initWorkspace);
 				if (initWorkspace == syncInitializer.getModels().size()) {
@@ -115,8 +130,6 @@ public class MmlEditorController implements Initializable {
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] openModelResult: " + openModel(modelId));
 					this.loadingVBox.setDisable(true);
 					this.loadingVBox.setVisible(false);
-					JSObject window = (JSObject) webView.getEngine().executeScript("window");
-			        window.setMember("clipboardConnector", new MmlEditorClipboardManager());
 				} else {
 					Platform.getLog(getClass())
 							.info(String.format(
@@ -128,12 +141,46 @@ public class MmlEditorController implements Initializable {
 		this.loadingVBox.setDisable(false);
 		this.loadingVBox.setVisible(true);
 		updateAllWebView();
-		
-		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
-			   @Override 
-			   public void flavorsChanged(FlavorEvent e) {
-				   Platform.getLog(getClass()).info(String.format("[CLIPBOARD UPDATE] %s | %s", e.getSource(),e.toString()));
-			   } 
+
+		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() {
+			@Override
+			public void flavorsChanged(FlavorEvent e) {
+				Platform.getLog(getClass())
+						.info(String.format("[CLIPBOARD UPDATE] %s | %s", e.getSource(), e.toString()));
+			}
+		});
+
+		this.webView.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			final KeyCodeCombination keyComb = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+
+			public void handle(KeyEvent ke) {
+				if (keyComb.match(ke)) {
+					onCopyAction();
+					ke.consume(); // <-- stops passing the event to next node
+				}
+			}
+		});
+
+		this.webView.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			final KeyCodeCombination keyComb = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
+
+			public void handle(KeyEvent ke) {
+				if (keyComb.match(ke)) {
+					onPasteAction();
+					ke.consume(); // <-- stops passing the event to next node
+				}
+			}
+		});
+
+		this.webView.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			final KeyCodeCombination keyComb = new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN);
+
+			public void handle(KeyEvent ke) {
+				if (keyComb.match(ke)) {
+					onCutAction();
+					ke.consume(); // <-- stops passing the event to next node
+				}
+			}
 		});
 	}
 
@@ -143,7 +190,7 @@ public class MmlEditorController implements Initializable {
 			if (this.lastClickedModelId == null) {
 				Alert alert = new Alert(AlertType.ERROR, "Could not determine file to open!", ButtonType.CLOSE);
 				alert.showAndWait();
-			}else {
+			} else {
 				return this.lastClickedModelId;
 			}
 		}
@@ -165,11 +212,10 @@ public class MmlEditorController implements Initializable {
 	private void updateCurrentWebView() {
 		Platform.getLog(getClass()).info("Update Webview | Reload current model");
 		Gson gson = new Gson();
-		MmlEditorSyncInitializer syncInitializer = MmlEditorSyncInitializer.buildCurrent(basePath,
-				lastClickedModelId);
+		MmlEditorSyncInitializer syncInitializer = MmlEditorSyncInitializer.buildCurrent(basePath, lastClickedModelId);
 		Platform.getLog(getClass()).info("[EDITOR UPDATER] INITIALIZE FILE UPDATE...");
 		for (MmlEditorSyncItem syncItem : syncInitializer.getModels()) {
-			Platform.getLog(getClass()).info("[EDITOR UPDATER >> ] " + syncItem.getPath()+" | "+lastClickedModelId);
+			Platform.getLog(getClass()).info("[EDITOR UPDATER >> ] " + syncItem.getPath() + " | " + lastClickedModelId);
 			String serializedInitializer = gson.toJson(syncItem);
 			String escapedSerializedInitializer = StringEscapeUtils.escapeJavaScript(serializedInitializer);
 			Platform.getLog(getClass()).info("[EDITOR UPDATER] " + escapedSerializedInitializer);
@@ -265,7 +311,42 @@ public class MmlEditorController implements Initializable {
 		Platform.getLog(getClass()).info("Worker state: " + webView.getEngine().getLoadWorker().getState().name());
 		Platform.getLog(getClass())
 				.info("documentProperty: " + webView.getEngine().documentProperty() == null ? "isNull" : "isNotNull");
-		//javafx.application.Platform.exit();
 		this.webView.getScene().getWindow().hide();
+	}
+
+	@FXML
+	private void onCutAction() {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info("[MML CLIPBOARD] CUT");
+		onCopyAction();
+		this.webView.getEngine().executeScript("setPaste('')");
+	}
+
+	@FXML
+	private void onCopyAction() {
+		String copyContent = (String) this.webView.getEngine().executeScript("getCopy()");
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info("[MML CLIPBOARD] COPY: " + copyContent);
+		final Clipboard sysClipboard = Clipboard.getSystemClipboard();
+		sysClipboard.clear();
+		final ClipboardContent content = new ClipboardContent();
+		content.putString(copyContent);
+		sysClipboard.setContent(content);
+		Platform.getLog(EditorActivator.getDefault().getBundle())
+				.info("[MML CLIPBOARD] NEW CONTENT: " + sysClipboard.getString());
+	}
+
+	@FXML
+	private void onPasteAction() {
+		Platform.getLog(EditorActivator.getDefault().getBundle()).info("[MML CLIPBOARD] PASTE");
+		final Clipboard sysClipboard = Clipboard.getSystemClipboard();
+		String pasteContent = "";
+		if (sysClipboard.hasString()) {
+			pasteContent = sysClipboard.getString();
+		}
+		pasteContent = StringEscapeUtils.escapeJavaScript(pasteContent);
+		this.webView.getEngine().executeScript(String.format("setPaste('%s')", pasteContent));
+	}
+
+	public WebView getWebView() {
+		return webView;
 	}
 }

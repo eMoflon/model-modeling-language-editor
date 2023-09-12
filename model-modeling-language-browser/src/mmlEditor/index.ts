@@ -202,7 +202,7 @@ export function exportWorkspace() {
     return JSON.stringify(preprocessedModels);
 }
 
-export function forcePaste(text: string) {
+export function setPaste(text: string) {
     if (editor != undefined) {
         const selection = editor.getSelection();
         if (selection != null) {
@@ -213,6 +213,14 @@ export function forcePaste(text: string) {
     }
 }
 
+export function getCopy() {
+    const selection: Selection | null = window.getSelection();
+    if (selection == null || !selection.rangeCount) {
+        return "";
+    }
+    return selection.toString()
+}
+
 declare global {
     interface Window {
         getCombinedGeneratorResult: any;
@@ -220,7 +228,8 @@ declare global {
         openModel: any;
         updateModelJson: any;
         exportWorkspace: any;
-        forcePaste: any
+        setPaste: any
+        getCopy: any
     }
 }
 
@@ -229,4 +238,5 @@ window.initializeWorkspaceJson = initializeWorkspaceJson;
 window.openModel = openModel;
 window.updateModelJson = updateModelJson;
 window.exportWorkspace = exportWorkspace;
-window.forcePaste = forcePaste;
+window.setPaste = setPaste;
+window.getCopy = getCopy;

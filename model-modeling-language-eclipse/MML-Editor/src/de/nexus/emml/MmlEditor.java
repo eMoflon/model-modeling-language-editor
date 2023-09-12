@@ -11,9 +11,6 @@ public class MmlEditor extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			// Parent root =
-			// FXMLLoader.load(getClass().getResource("MmlEditorDesign.fxml"));
-
 			FXMLLoader loader = new FXMLLoader();
 			loader.setClassLoader(getClass().getClassLoader());
 			loader.setLocation(getClass().getResource("MmlEditorDesign.fxml"));

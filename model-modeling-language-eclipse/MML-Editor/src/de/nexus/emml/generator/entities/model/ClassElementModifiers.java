@@ -2,6 +2,9 @@ package de.nexus.emml.generator.entities.model;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Dataclass for class modifiers
+ */
 public class ClassElementModifiers {
 	private boolean readonly;
 	@SerializedName("volatile")

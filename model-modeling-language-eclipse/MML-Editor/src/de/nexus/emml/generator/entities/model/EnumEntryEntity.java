@@ -1,5 +1,8 @@
 package de.nexus.emml.generator.entities.model;
 
+/**
+ * Dataclass for a single enum entry
+ */
 public class EnumEntryEntity<T> {
 	private String referenceId;
 	private String name;

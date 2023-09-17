@@ -2,6 +2,9 @@ package de.nexus.emml.generator.entities.instance;
 
 import java.util.ArrayList;
 
+/**
+ * Dataclass for an instance
+ */
 public class ObjectInstance {
 	private String referenceId;
 	private String referenceTypeId;

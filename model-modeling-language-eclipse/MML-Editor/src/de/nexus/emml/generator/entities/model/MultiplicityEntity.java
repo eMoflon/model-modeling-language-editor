@@ -1,5 +1,8 @@
 package de.nexus.emml.generator.entities.model;
 
+/**
+ * Dataclass for reference multiplicities
+ */
 public class MultiplicityEntity {
 	private boolean hasUpperBound;
 	private boolean lowerIsN;

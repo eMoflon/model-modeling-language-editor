@@ -1,5 +1,8 @@
 package de.nexus.emml.generator.entities.model;
 
+/**
+ * Dataclass for class references
+ */
 public class CReferenceEntity {
 	private String referenceId;
 	private String name;

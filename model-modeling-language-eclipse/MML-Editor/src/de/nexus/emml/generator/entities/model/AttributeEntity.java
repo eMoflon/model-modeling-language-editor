@@ -1,5 +1,8 @@
 package de.nexus.emml.generator.entities.model;
 
+/**
+ * Dataclass for a class attribute
+ */
 public class AttributeEntity<T> {
 	private String referenceId;
 	private String name;

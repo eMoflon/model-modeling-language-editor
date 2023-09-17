@@ -3,6 +3,9 @@ package de.nexus.emml.generator.entities.model;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Dataclass for a package
+ */
 public class PackageEntity {
 	private String referenceId;
 	private String name;

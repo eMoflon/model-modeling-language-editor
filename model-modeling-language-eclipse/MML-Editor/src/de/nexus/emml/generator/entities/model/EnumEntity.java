@@ -3,6 +3,9 @@ package de.nexus.emml.generator.entities.model;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Dataclass for a enum
+ */
 public class EnumEntity<T> {
 	private String referenceId;
 	private String name;

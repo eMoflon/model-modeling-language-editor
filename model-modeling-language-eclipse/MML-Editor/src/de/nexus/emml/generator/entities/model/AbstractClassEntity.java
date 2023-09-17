@@ -3,6 +3,9 @@ package de.nexus.emml.generator.entities.model;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/***
+ * Dataclass for a class-like (Abstract class, class or interface)
+ */
 public class AbstractClassEntity {
 	private String referenceId;
 	private String name;

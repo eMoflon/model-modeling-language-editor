@@ -1,5 +1,8 @@
 package de.nexus.emml.generator.entities.instance;
 
+/**
+ * Dataclass for an instance attribute
+ */
 public class AttributeEntry<T> {
 	private String name;
 	private String typeId;

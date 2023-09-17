@@ -156,7 +156,7 @@ public class EcoreTypeGraphBuilder {
 				reference.setUpperBound(cref.getMultiplicity().getUpper());
 			}
 		} else {
-			reference.setUpperBound(-1);
+			reference.setUpperBound(1);
 		}
 
 		reference.setDerived(cref.getModifiers().isDerived());

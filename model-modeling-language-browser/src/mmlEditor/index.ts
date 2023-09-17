@@ -36,10 +36,10 @@ const generatorStorage: Map<string, string> = new Map<string, string>();
 const diagnosticStorage: Map<string, number> = new Map<string, number>();
 
 // ... and register a notification listener expecting the AST in json,
-//  generating code, executing that code, and logging the result into the console.
+//  deserializing and storing metamodels and instances in the cache.
 // Such notifications are not sent by Langium by default,
-//  it's a customization in the arithmetics example language implementation,
-//  see node_modules/langium-arithmetics-dsl/src/language-server/main-browser.ts
+//  it's a customization in the extended language server implementation,
+//  see node_modules/model-modeling-langugage/src/language-server/main-browser.ts
 client.getLanguageClient()?.onNotification(
     new NotificationType<DocumentChange>('browser/DocumentChange'),
     dc => {
@@ -111,6 +111,12 @@ function configureEditor(editorConfig: CodeEditorConfig) {
     });
 }
 
+/**
+ * Initialize workspace
+ * Creates models for every passed file
+ * @param basepath Pathprefix
+ * @param models Deserialized model entries
+ */
 function initializeWorkspace(basepath: string, models: [{ path: string, text: string }]): number {
     workspacePath = basepath;
     diagnosticStorage.clear();
@@ -125,11 +131,21 @@ function initializeWorkspace(basepath: string, models: [{ path: string, text: st
     return models.length;
 }
 
+/**
+ * Initialize workspace
+ * Creates models for every passed file
+ * @param basepath Pathprefix
+ * @param models Serialized model entries
+ */
 export function initializeWorkspaceJson(basepath: string, models: string): number {
     console.log(models);
     return initializeWorkspace(basepath, JSON.parse(models));
 }
 
+/**
+ * Update a previously initialized model
+ * @param model Deserialized model entry
+ */
 function updateModel(model: { path: string, text: string }): boolean {
     if (editor == undefined) {
         return false;
@@ -148,11 +164,19 @@ function updateModel(model: { path: string, text: string }): boolean {
     return true;
 }
 
+/**
+ * Update a previously initialized model
+ * @param model Serialized model entry
+ */
 export function updateModelJson(model: string) {
     console.log(model);
     return updateModel(JSON.parse(model));
 }
 
+/**
+ * Opens the requested model as long as it was previously added during initialization.
+ * @param modelPath Model URI
+ */
 export function openModel(modelPath: string): boolean {
     if (editor != undefined) {
         const modelUri = monaco.Uri.parse("file:///" + modelPath);
@@ -171,6 +195,10 @@ interface GraphResult {
     diagnostic: { uri: string, err: number }[];
 }
 
+/**
+ * Function packs all cache entries (diagnostics and generators)
+ * into a common representation and returns it
+ */
 export function getCombinedGeneratorResult(): string {
     if (workspacePath == undefined) {
         return "{}";
@@ -187,6 +215,10 @@ export function getCombinedGeneratorResult(): string {
     return JSON.stringify(graphResult);
 }
 
+/**
+ * Function allows the export of all models. This is important in order to transfer
+ * any changes made in the editor to the local file system.
+ */
 export function exportWorkspace() {
     const models: monaco.editor.ITextModel[] = monaco.editor.getModels();
 
@@ -202,6 +234,10 @@ export function exportWorkspace() {
     return JSON.stringify(preprocessedModels);
 }
 
+/**
+ * Function is called by the ClipboardAdapter to insert the passed text in place of the current selection.
+ * @param text Text to insert
+ */
 export function setPaste(text: string) {
     if (editor != undefined) {
         const selection = editor.getSelection();
@@ -213,6 +249,9 @@ export function setPaste(text: string) {
     }
 }
 
+/**
+ * Function is called by the clipboard adapter to return the contents of the current selection.
+ */
 export function getCopy() {
     const selection: Selection | null = window.getSelection();
     if (selection == null || !selection.rangeCount) {
@@ -221,6 +260,10 @@ export function getCopy() {
     return selection.toString()
 }
 
+/**
+ * To make functions available in the DOM, we need to export them additionally and
+ * add them to the window object.
+ */
 declare global {
     interface Window {
         getCombinedGeneratorResult: any;

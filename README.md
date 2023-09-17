@@ -10,6 +10,13 @@ For this purpose, an MML Language Server is started when the MML Editor is opene
 editor is displayed as a web page in a webview in a JavaFX window.
 However, this also makes it clear that a large number of components have to be built and interact.
 
+---
+
+* [How to build](#how-to-build)
+* [Usage](#usage)
+
+---
+
 ## How to build
 
 1. Build the web editor first. For simplicity, we provide a Maven build script. For this, the following command can be

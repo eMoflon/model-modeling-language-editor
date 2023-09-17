@@ -7,6 +7,13 @@ the [MML repository](https://github.com/JanikNex/model-modeling-language).
 This directory contains the web server implementation of an MML editor based on the MML language server and
 the [Monaco editor](https://github.com/microsoft/monaco-editor).
 
+---
+
+* [Get started](#get-started)
+* [API functionality](#api-functionality)
+
+---
+
 ## Get started
 
 Since the MML server worker is needed to build the web editor, which requires building the MML repository, the
@@ -47,5 +54,5 @@ For this we provide `updateModel(model: { path: string, text: string })` and `up
 
 Afterwards one of the initialized models can be opened in the editor with the function `openModel(modelPath: string)`.
 
-Finally, we provide `exportWorkspace()` to export the workspace (for example, in case of changes 
+Finally, we provide `exportWorkspace()` to export the workspace (for example, in case of changes
 made in the editor), and `getCombinedGeneratorResult()` to retrieve the diagnostics as well as the compiled JSON result.

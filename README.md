@@ -12,6 +12,10 @@ However, this also makes it clear that a large number of components have to be b
 
 ---
 
+**The MML Editor was tested on Windows 11 under Eclipse 2023-06 with Java 17.**
+
+---
+
 * [How to build](#how-to-build)
 * [Usage](#usage)
 
@@ -37,6 +41,7 @@ However, this also makes it clear that a large number of components have to be b
       Gson ([Link](https://download.eclipse.org/oomph/archive/simrel/tcf.aggrcon/http___download.eclipse.org_tools_tcf_releases_1.7_1.7.0/com.google.gson_2.2.4.v201311231704.html))
 4. Install JavaFx and check that the path to the JavaFx bin directory is added to the Path environment
    variable. Alternatively, the resources provided in `model-modeling-language-eclipse/bin` can be used.
+   (Windows only, check [HERE](https://gluonhq.com/products/javafx/) for other operating systems)
 5. Right click on the MML Editor project and select `Run As -> Eclipse Application`. This will start a new Eclipse
    instance containing the MML editor. At startup it will ask for a new workspace.
    If the provided resources are used instead of an installation of JavaFx, the path environment variable must also

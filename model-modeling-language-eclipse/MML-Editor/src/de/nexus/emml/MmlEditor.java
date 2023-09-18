@@ -7,6 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * JavaFx Application for the MML Editor (Entrypoint)
+ */
 public class MmlEditor extends Application {
 	@Override
 	public void start(Stage primaryStage) {

@@ -11,6 +11,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 
+/**
+ * MmlLanguageServer extending the abstract LanguageServerProcess
+ * Defines language server startup command
+ */
 public class MmlLanguageServer extends LanguageServerProcess {
 	public MmlLanguageServer(int port) {
 		Platform.getLog(getClass()).info("Init MMLLanguageServer");

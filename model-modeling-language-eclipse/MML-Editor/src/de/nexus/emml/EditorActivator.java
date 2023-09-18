@@ -21,6 +21,7 @@ public class EditorActivator extends AbstractUIPlugin {
 	private static EditorActivator plugin;
 	private MmlLanguageServer langServer;
 	
+	// stores the file that has been rightclicked most recently
 	private Path lastClickedFile;
 
 	/**
@@ -56,6 +57,10 @@ public class EditorActivator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	/**
+	 * Open a provided file in the MML-Editor
+	 * In case the language server is not running yet, start the language server as well
+	 */
 	public void openFile(Path file) {
 		if (plugin == null) {
 			Platform.getLog(getClass()).info("Plugin not running!");
@@ -69,7 +74,6 @@ public class EditorActivator extends AbstractUIPlugin {
 			new Thread(() -> Application.launch(MmlEditor.class)).start();
 		} else {
 			Platform.getLog(getClass()).info("Langserver is already running");
-			//new Thread(() -> new MmlEditor().start(new Stage()));
 			javafx.application.Platform.runLater( () -> new MmlEditor().start( new Stage() ) );
 		}
 	}	

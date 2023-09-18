@@ -10,6 +10,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * Menu entry in the file rightclick menu. Restricted to .mml files
+ */
 public class MmlEditorAction implements IObjectActionDelegate, IActionDelegate {
 
 	// The plug-in ID
@@ -17,14 +20,16 @@ public class MmlEditorAction implements IObjectActionDelegate, IActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		// TODO Auto-generated method stub
+		// Method run when menu entry is clicked
 		Platform.getLog(getClass()).info("Action run");
+		// get rightclicked item
 		ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (!(sel instanceof IStructuredSelection)) {
 			return;
 		}
 		IStructuredSelection selection = (IStructuredSelection) sel;
 		Object obj = selection.getFirstElement();
+		// get file
 		IFile file = (IFile) Platform.getAdapterManager().getAdapter(obj, IFile.class);
 		Platform.getLog(getClass()).info("Selected file: " + file.getFullPath().toString());
 		EditorActivator activ = EditorActivator.getDefault();
@@ -33,13 +38,11 @@ public class MmlEditorAction implements IObjectActionDelegate, IActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
 		Platform.getLog(getClass()).info("Action selection changed");
 	}
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// TODO Auto-generated method stub
 		Platform.getLog(getClass()).info("Action set active");
 	}
 

@@ -9,6 +9,11 @@ import java.util.Objects;
 
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * Abstract langage server process
+ * Provides functionality for language server processes in the background 
+ * as well as IO-Operations 
+ */
 public abstract class LanguageServerProcess {
 	private Process process;
 	private List<String> commands;

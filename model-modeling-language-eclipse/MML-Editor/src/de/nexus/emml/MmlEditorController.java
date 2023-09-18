@@ -36,6 +36,19 @@ import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import netscape.javascript.JSException;
 
+/**
+ * JavaFx Controller
+ * 
+ * Provides all controller functions for JavaFx interactive elements,
+ * and handels interaction with the language server
+ * 
+ * Includes:
+ *  - Website loading on startup
+ *  - Workspace initialization
+ *  - Workspace export on saving
+ *  - Model export
+ *  - Clipboard
+ */
 public class MmlEditorController implements Initializable {
 
 	@FXML
@@ -88,8 +101,14 @@ public class MmlEditorController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		Platform.getLog(getClass()).info("Calling initializer for Controller");
 		this.engine = webView.getEngine();
+		// Register listener on state change
+		// since the language server starts on first open in parallel,
+		// the website will fail to load in most cases.
+		// We register this listener to notice that to retry till success
+		// and initialize afterwards.
 		webView.getEngine().getLoadWorker().stateProperty().addListener(x -> {
 			if (webView.getEngine().getLoadWorker().getState().equals(State.FAILED)) {
+				// Loading the Mml Editor failed => retry in one second
 				Timeline tl = new Timeline(new KeyFrame(Duration.seconds(1), ae -> {
 					Platform.getLog(getClass()).info("[WORKER STATE OBSERVER] Worker failed - reloading...");
 					updateAllWebView();
@@ -104,11 +123,13 @@ public class MmlEditorController implements Initializable {
 							+ webView.getEngine().getLoadWorker().getProgress());
 			if (webView.getEngine().getLoadWorker().getState().equals(State.RUNNING)
 					&& webView.getEngine().getLoadWorker().getMessage().contains("Loading http://localhost")) {
+				// Loading the Mml Editor succeeded. We must initialize the workspace
 				Platform.getLog(getClass())
 						.info("[WORKER STATE OBSERVER] Worker succeeded - initialize editor | "
 								+ webView.getEngine().getLoadWorker().getTitle() + " | "
 								+ webView.getEngine().getLoadWorker().getMessage() + " | "
 								+ webView.getEngine().getLoadWorker().getProgress());
+				// Serialize alle files in workspace
 				Gson gson = new Gson();
 				MmlEditorSyncInitializer syncInitializer = MmlEditorSyncInitializer.build(basePath);
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] INITIALIZE EDITOR...");
@@ -117,6 +138,7 @@ public class MmlEditorController implements Initializable {
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + escapedSerializedInitializer);
 				int initWorkspace = -1;
 				try {
+					// call JS function of the Mml Website
 					initWorkspace = (int) webView.getEngine().executeScript(String
 							.format("initializeWorkspaceJson(\"%s\",`%s`)", basePath, escapedSerializedInitializer));
 				} catch (JSException ex) {
@@ -125,6 +147,7 @@ public class MmlEditorController implements Initializable {
 				}
 				Platform.getLog(getClass()).info("[EDITOR INITIALIZER] " + initWorkspace);
 				if (initWorkspace == syncInitializer.getModels().size()) {
+					// the JS initializer returned the correct number of initialized models
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] INITIALIZED SUCCSSFULLY");
 					String modelId = getLastClickedFileModelName();
 					Platform.getLog(getClass()).info("[EDITOR INITIALIZER] openModelResult: " + openModel(modelId));
@@ -138,10 +161,13 @@ public class MmlEditorController implements Initializable {
 				}
 			}
 		});
+		
+		// show loading animation and load for the first time
 		this.loadingVBox.setDisable(false);
 		this.loadingVBox.setVisible(true);
 		updateAllWebView();
 
+		// Clipboard debug
 		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() {
 			@Override
 			public void flavorsChanged(FlavorEvent e) {
@@ -150,6 +176,14 @@ public class MmlEditorController implements Initializable {
 			}
 		});
 
+		
+		// Handling Clipboard actions (cut, copy, paste) on the editor site (website) was unreliable,
+		// and did not work most of the time due to parallel events by JavaFx. Although the editor did call
+		// with the correct arguments, there was an additional copy event by JavaFx that cleared the clipboard again
+		// 
+		// The more reliable implementation has been a complete overwrite of the common Ctrl+X, Ctrl+C und Ctrl+V shortcuts.
+		// This allows to stop the event passing at all and lead to a more reliable solution.
+		// => JavaFx is the initiator and requests the selection (copy) and passes replacement text (paste) by JS
 		this.webView.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			final KeyCodeCombination keyComb = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
 

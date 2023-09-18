@@ -12,7 +12,7 @@ However, this also makes it clear that a large number of components have to be b
 
 ---
 
-**The MML Editor was tested on Windows 11 under Eclipse 2023-06 with Java 17.**
+**The MML Editor was tested on Windows 11 under Eclipse 2023-09 with Java 17.**
 
 ---
 

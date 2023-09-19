@@ -10,6 +10,13 @@ import org.eclipse.emf.ecore.EReference;
 
 import de.nexus.emml.generator.entities.instance.ReferenceEntry;
 
+/**
+ * XMIInstanceResolver helps to resolve and link references in instance graphs. MML replaces 
+ * all references with unique ids. To be independent of the execution order when constructing 
+ * the instance graph, the TypeResolver stores all missing references. Finally, when exporting 
+ * the instance graph (and thus after successful complete construction), all missing references 
+ * are resolved.
+ */
 public class XMIInstanceResolver {
 	private final Map<String, EObject> objects = new HashMap<String, EObject>();
 	private final Map<String, List<ReferenceEntry>> unresolvedReferences = new HashMap<String, List<ReferenceEntry>>();

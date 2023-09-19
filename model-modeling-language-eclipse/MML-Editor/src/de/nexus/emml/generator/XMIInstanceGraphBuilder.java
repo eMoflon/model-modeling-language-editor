@@ -19,6 +19,9 @@ import de.nexus.emml.EditorActivator;
 import de.nexus.emml.generator.entities.instance.AttributeEntry;
 import de.nexus.emml.generator.entities.instance.ObjectInstance;
 
+/**
+ * The XMIInstanceGraphBuilder contains all functions to generate a model instance from a ObjectInstance as an XMI file.
+ */
 public class XMIInstanceGraphBuilder {
 	private final ArrayList<EObject> objects = new ArrayList<EObject>();
 	private final String exportPath;

@@ -27,39 +27,74 @@ import de.nexus.emml.generator.entities.model.EnumEntity;
 import de.nexus.emml.generator.entities.model.EnumEntryEntity;
 import de.nexus.emml.generator.entities.model.PackageEntity;
 
+/**
+ * The EcoreTypeGraphBuilder contains all functions to generate a metamodel from a PackageEntity as an Ecore file.
+ */
 public class EcoreTypeGraphBuilder {
 	private final EPackage ePackage;
 	private final String exportPath;
 	private final EcoreTypeResolver resolver;
 
+	/**
+	 * Build an Ecore Package
+	 * @param pckg PackageEntity
+	 * @param targetUri Package URI
+	 * @param exportPath Path for the Ecore export
+	 * @param resolver EcoreTypeResolver
+	 */
 	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, String exportPath, EcoreTypeResolver resolver) {
+		// create a new package
 		this.ePackage = createPackage(pckg.getName(), pckg.getName(), targetUri);
 		this.exportPath = exportPath;
 		this.resolver = resolver;
 
+		// store package in the resolver
 		resolver.store(pckg.getReferenceId(), this.ePackage);
 
+		// build subpackages
 		pckg.getSubPackages().forEach(subPckg -> {
 			EPackage subPackage = new EcoreTypeGraphBuilder(subPckg, targetUri, resolver).getAsSubpackage();
 			this.ePackage.getESubpackages().add(subPackage);
 		});
+		
+		// build classes
 		pckg.getAbstractClasses().forEach(ab -> {
 			EClass clss = createEClass(ab);
 			ab.getAttributes().forEach(attr -> addAttribute(clss, attr, false));
 			ab.getReferences().forEach(cref -> addReference(clss, cref));
 		});
+		
+		// build enums
 		pckg.getEnums().forEach(enm -> {
 			EEnum enmm = createEEnum(enm);
 			enm.getEntries().forEach(ee -> addEEnumLiteral(enmm, (EnumEntryEntity<?>) ee, enm));
 		});
 	}
 
+	/**
+	 * /**
+	 * Build an Ecore Package
+	 * 
+	 * Does not include an export path, since this is used for subpackages
+	 * 
+	 * @param pckg PackageEntity
+	 * @param targetUri Package URI
+	 * @param resolver EcoreTypeResolver
+	 */
 	public EcoreTypeGraphBuilder(PackageEntity pckg, String targetUri, EcoreTypeResolver resolver) {
 		this(pckg, targetUri, null, resolver);
 	}
 
+	/**
+	 * Export EPackages to Ecore files
+	 * 
+	 * @param graphBuilderList List of EcoreTypeGraphBuilders
+	 * @param resolver EcoreTypeResolver
+	 * @param resSet Common resource set
+	 */
 	public static void buildEcoreFile(List<EcoreTypeGraphBuilder> graphBuilderList, EcoreTypeResolver resolver,
 			ResourceSet resSet) {
+		// resolve all unresolved types
 		resolver.resolveUnresovedTypes();
 
 		for (EcoreTypeGraphBuilder builder : graphBuilderList) {

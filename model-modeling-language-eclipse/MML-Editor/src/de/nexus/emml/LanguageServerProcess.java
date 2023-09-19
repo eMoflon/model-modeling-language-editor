@@ -45,7 +45,10 @@ public abstract class LanguageServerProcess {
 
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder builder = new ProcessBuilder(getCommands());
+		
+		// We need to extend the PATH variable to be compatible with systems without local node installation.
 		builder.environment().put("PATH", System.getenv("PATH")+File.pathSeparator+NodeJSManager.getNodeJsLocation().getParentFile().getAbsolutePath());
+		
 		builder.directory(new File(getWorkingDirectory()));
 		builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 		builder.redirectError(ProcessBuilder.Redirect.INHERIT);

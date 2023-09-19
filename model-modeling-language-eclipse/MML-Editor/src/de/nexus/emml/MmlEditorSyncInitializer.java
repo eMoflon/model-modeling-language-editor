@@ -14,6 +14,11 @@ import org.eclipse.core.runtime.Platform;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * The MmlEditorSyncInitializer controls the communication between the MML Editor 
+ * and the local file system. It provides functions for (de)serializing file contents 
+ * and for reading and writing files.
+ */
 public class MmlEditorSyncInitializer {
 	private final ArrayList<MmlEditorSyncItem> models = new ArrayList<>();
 

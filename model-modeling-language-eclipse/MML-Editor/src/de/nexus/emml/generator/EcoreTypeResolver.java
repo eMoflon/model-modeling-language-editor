@@ -21,6 +21,13 @@ import de.nexus.emml.generator.entities.instance.ReferenceEntry;
 import de.nexus.emml.generator.entities.model.AttributeEntity;
 import de.nexus.emml.generator.entities.model.CReferenceEntity;
 
+/**
+ * The EcoreTypeResolver helps to resolve and link references in metamodels. MML replaces 
+ * all references with unique ids. To be independent of the execution order when constructing 
+ * the metamodel, the TypeResolver tries to resolve a reference using the id and stores the 
+ * missing reference otherwise. When exporting the metamodel (and thus after successful complete 
+ * construction) all missing references are finally resolved.
+ */
 public class EcoreTypeResolver {
 	private final Map<String, EClassifier> classifiers = new HashMap<String, EClassifier>();
 	private final Map<String, EReference> references = new HashMap<String, EReference>();

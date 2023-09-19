@@ -17,6 +17,11 @@ import de.nexus.emml.generator.entities.instance.GeneratorInstance;
 import de.nexus.emml.generator.entities.model.ModelEntity;
 import de.nexus.emml.generator.entities.model.PackageEntity;
 
+/**
+ * The EmfResourceBuilder coordinates the export of metamodels and instance graphs. 
+ * Starting from the deserialized datasets of the Language Server, metamodels and 
+ * instance graphs are first converted into EMF representations and finally exported.
+ */
 public class EmfResourceBuilder {
 	public static void buildEmfResources(ArrayList<WebWorkerGeneratorEntry> generators, File basePath) {
 		Platform.getLog(EditorActivator.getDefault().getBundle()).info("Deserialize model");

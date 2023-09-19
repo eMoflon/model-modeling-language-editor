@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 
 /**
  * Abstract langage server process
@@ -44,6 +45,7 @@ public abstract class LanguageServerProcess {
 
 	protected ProcessBuilder createProcessBuilder() {
 		ProcessBuilder builder = new ProcessBuilder(getCommands());
+		builder.environment().put("PATH", System.getenv("PATH")+File.pathSeparator+NodeJSManager.getNodeJsLocation().getParentFile().getAbsolutePath());
 		builder.directory(new File(getWorkingDirectory()));
 		builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 		builder.redirectError(ProcessBuilder.Redirect.INHERIT);

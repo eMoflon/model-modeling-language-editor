@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="HospitalExample" nsURI="platform:/resource/HospitalExample/model/HospitalExample_HospitalExample.ecore"
+    nsPrefix="HospitalExample">
+  <eClassifiers xsi:type="ecore:EClass" name="Hospital">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reception" ordered="false"
+        unique="false" lowerBound="1" eType="#//Reception" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="staff" ordered="false"
+        unique="false" upperBound="-1" eType="#//Staff" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="department" ordered="false"
+        unique="false" upperBound="-1" eType="#//Department" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Reception">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="waits" ordered="false"
+        unique="false" upperBound="-1" eType="#//Patient" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Staff" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="staffID" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="-1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" ordered="false" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="works" ordered="false"
+        unique="false" eType="#//Department" resolveProxies="false" eOpposite="#//Department/staff"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Doctor" eSuperTypes="#//Staff">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="patientCapacity" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="caresfor" ordered="false"
+        unique="false" upperBound="-1" eType="#//Patient" resolveProxies="false" eOpposite="#//Patient/doctor"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nurse" eSuperTypes="#//Staff">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="responsible" ordered="false"
+        unique="false" eType="#//Room" resolveProxies="false" eOpposite="#//Room/nurses"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Department">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dID" ordered="false" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="-1"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxRoomCount" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rooms" ordered="false"
+        unique="false" upperBound="-1" eType="#//Room" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="staff" ordered="false"
+        unique="false" upperBound="-1" eType="#//Staff" resolveProxies="false" eOpposite="#//Staff/works"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Patient">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="patientID" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="-1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" ordered="false" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" ordered="false"
+        unique="false" eType="#//Carelevel" defaultValueLiteral="PENDING"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="doctor" ordered="false"
+        unique="false" lowerBound="1" upperBound="-1" eType="#//Doctor" resolveProxies="false"
+        eOpposite="#//Doctor/caresfor"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Room">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="capacity" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" ordered="false"
+        unique="false" eType="#//Carelevel"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lies" ordered="false" unique="false"
+        upperBound="-1" eType="#//Patient" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nurses" ordered="false"
+        unique="false" upperBound="-1" eType="#//Nurse" resolveProxies="false" eOpposite="#//Nurse/responsible"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Carelevel">
+    <eLiterals name="WEAK"/>
+    <eLiterals name="MEDIUM" value="1"/>
+    <eLiterals name="STRONG" value="2"/>
+    <eLiterals name="PENDING" value="3"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,123 @@
+package HospitalExample {
+    class Hospital {
+        reference HospitalExample.Reception[1] reception;
+        reference HospitalExample.Staff[*] staff;
+        reference HospitalExample.Department[*] department;
+    }
+    class Reception {
+        reference HospitalExample.Patient[*] waits;
+    }
+    abstract class Staff {
+        attribute int staffID = -1;
+        @opposite HospitalExample.Department::staff
+        reference HospitalExample.Department works;
+        attribute string name;
+    }
+    class Doctor extends Staff {
+        @opposite HospitalExample.Patient::doctor
+        reference HospitalExample.Patient[*] caresfor;
+        attribute int patientCapacity;
+    }
+    class Nurse extends Staff {
+        @opposite HospitalExample.Room::nurses
+        reference HospitalExample.Room responsible;
+    }
+    class Department {
+        reference HospitalExample.Room[*] rooms;
+        attribute int dID = -1 {id};
+        @opposite HospitalExample.Staff::works
+        reference HospitalExample.Staff[*] staff;
+        attribute int maxRoomCount;
+    }
+    class Patient {
+        attribute int patientID = -1;
+        attribute string name;
+        attribute HospitalExample.Carelevel level = HospitalExample.Carelevel::PENDING;
+        @opposite HospitalExample.Doctor::caresfor
+        reference HospitalExample.Doctor[+] doctor;
+    }
+    class Room {
+        attribute int capacity;
+        attribute HospitalExample.Carelevel level;
+        reference HospitalExample.Patient[*] lies;
+        @opposite HospitalExample.Nurse::responsible
+        reference HospitalExample.Nurse[*] nurses;
+    }
+    enum Carelevel {
+        WEAK = 0,
+        MEDIUM = 1,
+        STRONG = 2,
+        PENDING = 3
+    }
+}
+
+
+macro createHospital[] {
+    HospitalExample.Hospital hospital {
+    }
+}
+
+
+macro createReception[] {
+    HospitalExample.Reception reception {
+    }
+}
+
+macro createDepartment[HospitalExample.Hospital hsp, int depId, int maxRooms] {
+    HospitalExample.Department dep {
+        dID = depId
+        maxRoomCount = maxRooms
+    }
+    hsp {
+        department -> dep
+    }
+}
+
+macro createRoom[HospitalExample.Department dep, int cap] {
+    HospitalExample.Room room {
+        capacity = cap
+        level = HospitalExample.Carelevel::WEAK
+    }
+    dep {
+        rooms -> room
+    }
+}
+
+macro createDoctor[HospitalExample.Department dep, int cap] {
+    HospitalExample.Doctor doc {
+        patientCapacity = cap
+    }
+    dep {
+        staff -> doc
+    }
+}
+
+macro assignReception[HospitalExample.Hospital hsp, HospitalExample.Reception res] {
+    hsp {
+        reception -> res
+    }
+}
+
+function createTwoRooms(HospitalExample.Department dep) {
+    for i in 0:2 {
+        createRoom[dep,2]
+        createRoom[dep,2]
+    }
+}
+
+instance Testhospital {
+    HospitalExample.Hospital hospital = createHospital[].hospital
+    HospitalExample.Reception reception = createReception[].reception
+    assignReception[hospital,reception]
+    HospitalExample.Department dep1 = createDepartment[hospital,0,4].dep
+    HospitalExample.Department dep2 = createDepartment[hospital,1,4].dep
+    
+    createTwoRooms(dep1)
+    createRoom[dep2,4]
+    
+    createDoctor[dep1,1]
+    createDoctor[dep1,1]
+    createDoctor[dep1,2]
+    createDoctor[dep2,2]
+    createDoctor[dep2,2]
+}

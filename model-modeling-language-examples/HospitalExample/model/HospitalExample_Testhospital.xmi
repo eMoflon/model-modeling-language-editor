@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:HospitalExample="platform:/resource/HospitalExample/model/HospitalExample_HospitalExample.ecore">
+  <HospitalExample:Hospital reception="/1" department="0 1"/>
+  <HospitalExample:Reception/>
+  <HospitalExample:Department dID="0" maxRoomCount="4" rooms="/4 /5 /6 /7" staff="/9 /10 /11"/>
+  <HospitalExample:Department dID="1" maxRoomCount="4" rooms="/8" staff="/12 /13"/>
+  <HospitalExample:Room capacity="2"/>
+  <HospitalExample:Room capacity="2"/>
+  <HospitalExample:Room capacity="2"/>
+  <HospitalExample:Room capacity="2"/>
+  <HospitalExample:Room capacity="4"/>
+  <HospitalExample:Doctor works="0" patientCapacity="1"/>
+  <HospitalExample:Doctor works="0" patientCapacity="1"/>
+  <HospitalExample:Doctor works="0" patientCapacity="2"/>
+  <HospitalExample:Doctor works="1" patientCapacity="2"/>
+  <HospitalExample:Doctor works="1" patientCapacity="2"/>
+</xmi:XMI>

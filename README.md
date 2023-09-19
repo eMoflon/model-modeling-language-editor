@@ -12,12 +12,15 @@ However, this also makes it clear that a large number of components have to be b
 
 ---
 
-**The MML Editor was tested on Windows 11 under Eclipse 2023-09 with Java 17.**
+ℹ️ **The MML Editor was tested on Windows 11 under Eclipse 2023-09 with Java 17.**
+
+⚠️ **Due to incompatibilities of JavaFx with GTK, the MML editor currently cannot be used under Linux!**
 
 ---
 
 * [How to build](#how-to-build)
 * [Usage](#usage)
+* [Examples](#examples)
 
 ---
 
@@ -64,3 +67,10 @@ can be saved in the file system.
 Finally, MML files can be compiled and converted to EMF files. To do this, select the `Export Model` function.
 This will transfer all packages to Ecore files and all instances to XMI files. The exported files are located in the
 `model` directory of the project.
+
+## Examples
+
+The workspace `model-modeling-language-examples` serves as a collection of examples. Among others, this includes
+an implementation of
+the [HospitalExample](https://github.com/eMoflon/emoflon-ibex-tutorial/tree/master/HospitalExample), which has already
+been used as an example for [eMoflon::IBeX](https://github.com/eMoflon/emoflon-ibex).
